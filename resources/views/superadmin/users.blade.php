@@ -49,7 +49,7 @@
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
-                                <td class="text-muted">{{ $user->role }}</td>
+                                <td class="text-muted">{{ $user->getRoleNames()->implode(', ') ?: '-' }}</td>
                                 <td>
                                     <span class="badge rounded-pill {{ $user->is_active ? 'bg-success' : 'bg-danger' }}">
                                         {{ $user->is_active ? 'Aktif' : 'Nonaktif' }}
@@ -57,7 +57,7 @@
                                 </td>
                                 <td class="text-muted">{{ $user->created_at->translatedFormat('d M Y') }}</td>
                                 <td>
-                                    @if($user->role !== 'superadmin')
+                                    @if(!$user->hasRole('superadmin'))
                                         <form method="POST" action="{{ route('superadmin.users.toggle-status', $user) }}" class="d-inline">
                                             @csrf @method('PUT')
                                             <button type="submit"

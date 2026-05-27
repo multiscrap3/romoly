@@ -62,8 +62,9 @@
                         </div>
                         <div class="text-muted" style="font-size:.72rem;">{{ $member->email }}</div>
                     </div>
-                    <span class="badge rounded-pill {{ $member->role === 'owner' ? 'bg-warning text-dark' : 'bg-secondary' }}">
-                        {{ ucfirst($member->role) }}
+                    @php $memberRole = $member->getRoleNames()->first() ?? 'member'; @endphp
+                    <span class="badge rounded-pill {{ $member->hasRole('owner') ? 'bg-warning text-dark' : 'bg-secondary' }}">
+                        {{ ucfirst($memberRole) }}
                     </span>
                 </div>
             @endforeach
@@ -71,7 +72,7 @@
     </div>
 
     {{-- Undang anggota --}}
-    @if(in_array(auth()->user()->role, ['owner', 'admin']))
+    @can('manage members')
         <div class="card border-0 shadow-sm" style="border-radius:.75rem;">
             <div class="card-body p-4">
                 <h6 class="fw-semibold mb-3">{{ __('household.invite') }}</h6>
@@ -82,13 +83,14 @@
                     <select name="role" class="form-select form-select-sm" style="width:auto;">
                         <option value="member">{{ __('household.role_member') }}</option>
                         <option value="admin">{{ __('household.role_admin') }}</option>
+                        <option value="analyst">{{ __('household.role_analyst') }}</option>
                         <option value="viewer">{{ __('household.role_viewer') }}</option>
                     </select>
                     <button type="submit" class="btn btn-primary btn-sm">{{ __('household.invite') }}</button>
                 </form>
             </div>
         </div>
-    @endif
+    @endcan
 
     {{-- Bergabung via kode --}}
     <div class="card border-0 shadow-sm" style="border-radius:.75rem;">

@@ -29,17 +29,20 @@
                         <div class="text-muted" style="font-size:.72rem;">{{ $member->email }}</div>
                     </div>
                     <div class="d-flex align-items-center gap-2">
-                        <span class="badge rounded-pill {{ $member->role === 'owner' ? 'bg-warning text-dark' : 'bg-secondary' }}">
-                            {{ ucfirst($member->role) }}
+                        @php $memberRole = $member->getRoleNames()->first() ?? 'member'; @endphp
+                        <span class="badge rounded-pill {{ $member->hasRole('owner') ? 'bg-warning text-dark' : 'bg-secondary' }}">
+                            {{ ucfirst($memberRole) }}
                         </span>
-                        @if(auth()->user()->role === 'owner' && $member->id !== auth()->id() && $member->id !== $household->owner_id)
-                            <form method="POST" action="{{ route('household.members.remove', $member) }}"
-                                  onsubmit="return confirm('{{ __('household.remove_member') }}: {{ $member->name }}?')"
-                                  class="d-inline">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-link btn-sm text-danger p-0" style="font-size:.78rem;">{{ __('messages.delete') }}</button>
-                            </form>
-                        @endif
+                        @can('manage members')
+                            @if(!$member->hasRole('owner') && $member->id !== auth()->id())
+                                <form method="POST" action="{{ route('household.members.remove', $member) }}"
+                                      onsubmit="return confirm('{{ __('household.remove_member') }}: {{ $member->name }}?')"
+                                      class="d-inline">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="btn btn-link btn-sm text-danger p-0" style="font-size:.78rem;">{{ __('messages.delete') }}</button>
+                                </form>
+                            @endif
+                        @endcan
                     </div>
                 </div>
             @endforeach
@@ -70,7 +73,7 @@
     @endif
 
     {{-- Undang anggota baru --}}
-    @if(in_array(auth()->user()->role, ['owner', 'admin']))
+    @can('manage members')
         <div class="card border-0 shadow-sm" style="border-radius:.75rem;">
             <div class="card-body p-4">
                 <h6 class="fw-semibold mb-3">{{ __('household.invite') }}</h6>
@@ -85,7 +88,7 @@
                 </form>
             </div>
         </div>
-    @endif
+    @endcan
 
     <a href="{{ route('household.index') }}" class="btn btn-link btn-sm text-muted text-decoration-none p-0">
         &larr; {{ __('messages.back') }}

@@ -59,7 +59,7 @@
                             <div class="text-muted" style="font-size:.72rem;">{{ $user->email }}</div>
                         </div>
                         <div class="d-flex align-items-center gap-2">
-                            <span class="text-muted">{{ $user->role }}</span>
+                            <span class="text-muted">{{ $user->getRoleNames()->implode(', ') ?: '-' }}</span>
                             <span class="rounded-circle d-inline-block {{ $user->is_active ? 'bg-success' : 'bg-danger' }}"
                                   style="width:8px;height:8px;"></span>
                         </div>

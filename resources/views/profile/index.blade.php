@@ -48,7 +48,7 @@
                 </div>
             </div>
             <div class="flex-shrink-0 text-end d-none d-md-block">
-                <span class="badge rounded-pill bg-primary" title="{{ __('profile.role') }}">{{ ucfirst($user->role ?? 'member') }}</span>
+                <span class="badge rounded-pill bg-primary" title="{{ __('profile.role') }}">{{ $user->getRoleNames()->map('ucfirst')->implode(', ') ?: 'member' }}</span>
                 @if($user->household)
                     <div class="small text-muted mt-1" title="{{ __('profile.household') }}">{{ $user->household->nama }}</div>
                 @endif
