@@ -43,9 +43,8 @@ class HouseholdController extends Controller
      */
     public function update(Request $request, Household $household)
     {
-        // Check if user is owner
-        if ($household->owner_id !== auth()->id()) {
-            abort(403, 'Only household owner can update household info');
+        if (!auth()->user()->hasPermissionTo('manage household settings')) {
+            abort(403, 'Anda tidak memiliki izin untuk mengubah informasi household');
         }
 
         $request->validate([
@@ -72,9 +71,8 @@ class HouseholdController extends Controller
 
         $household = auth()->user()->household;
 
-        // Check if user is owner
-        if ($household->owner_id !== auth()->id()) {
-            abort(403, 'Only household owner can invite members');
+        if (!auth()->user()->hasPermissionTo('manage members')) {
+            abort(403, 'Anda tidak memiliki izin untuk mengundang anggota');
         }
 
         try {
@@ -211,11 +209,11 @@ class HouseholdController extends Controller
     {
         $household = auth()->user()->household;
 
-        if ($household->owner_id !== auth()->id()) {
-            abort(403, 'Only household owner can update member roles');
+        if (!auth()->user()->hasPermissionTo('manage roles')) {
+            abort(403, 'Anda tidak memiliki izin untuk mengubah role anggota');
         }
 
-        if ($user->id === $household->owner_id) {
+        if ($user->hasRole('owner')) {
             return back()->with('error', 'Tidak dapat mengubah role owner');
         }
 
@@ -224,10 +222,10 @@ class HouseholdController extends Controller
         }
 
         $request->validate([
-            'role' => 'required|in:member,admin',
+            'role' => 'required|in:admin,analyst,member,viewer',
         ]);
 
-        $user->update(['role' => $request->role]);
+        $user->syncRoles([$request->role]);
 
         return back()->with('success', 'Role berhasil diperbarui');
     }
@@ -239,13 +237,12 @@ class HouseholdController extends Controller
     {
         $household = auth()->user()->household;
 
-        // Check if user is owner
-        if ($household->owner_id !== auth()->id()) {
-            abort(403, 'Only household owner can remove members');
+        if (!auth()->user()->hasPermissionTo('manage members')) {
+            abort(403, 'Anda tidak memiliki izin untuk menghapus anggota');
         }
 
         // Can't remove owner
-        if ($user->id === $household->owner_id) {
+        if ($user->hasRole('owner')) {
             return back()->with('error', 'Tidak dapat menghapus owner household');
         }
 
