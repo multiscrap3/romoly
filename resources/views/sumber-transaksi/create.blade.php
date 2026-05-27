@@ -45,8 +45,8 @@
                     <label class="form-label fw-medium">{{ __('sumber.initial_balance') }}</label>
                     <div class="input-group">
                         <span class="input-group-text">Rp</span>
-                        <input type="number" name="saldo" value="{{ old('saldo', 0) }}" min="0" step="1000"
-                               class="form-control @error('saldo') is-invalid @enderror">
+                        <input type="text" inputmode="numeric" name="saldo" value="{{ old('saldo', 0) }}"
+                               class="form-control currency-input @error('saldo') is-invalid @enderror">
                         @error('saldo')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                 </div>

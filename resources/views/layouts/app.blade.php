@@ -575,6 +575,54 @@
 
 @stack('scripts')
 
+{{-- Currency input formatter: tambahkan class "currency-input" pada input angka (Rp) --}}
+<script>
+(function () {
+    function parseCurrency(v) {
+        return String(v).replace(/\./g, '').replace(/[^\d]/g, '');
+    }
+    function formatCurrency(v) {
+        var d = parseCurrency(v);
+        return d ? parseInt(d, 10).toLocaleString('id-ID') : '';
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.currency-input').forEach(function (el) {
+            if (el.value) el.value = formatCurrency(el.value);
+        });
+    });
+
+    document.addEventListener('input', function (e) {
+        var el = e.target;
+        if (!el.classList.contains('currency-input')) return;
+        var start = el.selectionStart;
+        var digitsBeforeCursor = parseCurrency(el.value.substring(0, start)).length;
+        el.value = formatCurrency(el.value);
+        var newPos = 0, count = 0;
+        for (var i = 0; i < el.value.length; i++) {
+            if (el.value[i] !== '.') count++;
+            if (count >= digitsBeforeCursor) { newPos = i + 1; break; }
+        }
+        if (digitsBeforeCursor === 0) newPos = 0;
+        el.setSelectionRange(newPos, newPos);
+    });
+
+    document.addEventListener('keydown', function (e) {
+        var el = e.target;
+        if (!el.classList.contains('currency-input')) return;
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        var nav = ['Backspace','Delete','Tab','Escape','Enter','Home','End','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'];
+        if (!nav.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
+    });
+
+    document.addEventListener('submit', function (e) {
+        e.target.querySelectorAll('.currency-input').forEach(function (el) {
+            el.value = parseCurrency(el.value) || '0';
+        });
+    });
+}());
+</script>
+
 {{-- Modals teleported ke body-level agar tidak ter-clip container di mobile --}}
 @stack('modals')
 </body>

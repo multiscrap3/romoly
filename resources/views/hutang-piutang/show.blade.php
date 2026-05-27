@@ -141,12 +141,11 @@
                                     </label>
                                     <div class="input-group input-group-sm">
                                         <span class="input-group-text">Rp</span>
-                                        <input type="number" name="jumlah" min="1" step="any"
-                                               max="{{ $hutangPiutang->sisa }}" required
+                                        <input type="text" inputmode="numeric" name="jumlah" required
                                                value="{{ $hutangPiutang->tipe_pembayaran === 'cicilan'
                                                    ? $hutangPiutang->jumlah_cicilan
                                                    : $hutangPiutang->sisa }}"
-                                               placeholder="0" class="form-control">
+                                               placeholder="0" class="form-control currency-input">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">

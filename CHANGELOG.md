@@ -17,6 +17,13 @@ dan project ini menggunakan [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.4.0] — 2026-05-27
+
+### Added
+- **Separator ribuan pada semua input angka**: semua field input nominal (jumlah, target tabungan, saldo awal, cicilan, anggaran, dll) kini menampilkan pemisah ribuan otomatis saat mengetik (contoh: `1500000` → `1.500.000`) menggunakan format lokal Indonesia. Berlaku di seluruh modul: Transaksi, Anggaran, Tabungan, Hutang/Piutang, Recurring, Sumber Dana, dan Onboarding.
+
+---
+
 ## [1.3.0] — 2026-05-27
 
 ### Fixed

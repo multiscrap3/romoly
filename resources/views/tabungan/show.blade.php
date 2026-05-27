@@ -81,7 +81,7 @@
                                 <label class="form-label small fw-medium">{{ __('tabungan.amount') }}</label>
                                 <div class="input-group input-group-sm">
                                     <span class="input-group-text">Rp</span>
-                                    <input type="number" name="jumlah" min="1" required placeholder="0" class="form-control">
+                                    <input type="text" inputmode="numeric" name="jumlah" required placeholder="0" class="form-control currency-input">
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -113,7 +113,7 @@
                                 <label class="form-label small fw-medium">{{ __('tabungan.amount') }}</label>
                                 <div class="input-group input-group-sm">
                                     <span class="input-group-text">Rp</span>
-                                    <input type="number" name="jumlah" min="1" max="{{ $tabungan->terkumpul }}" required placeholder="0" class="form-control">
+                                    <input type="text" inputmode="numeric" name="jumlah" required placeholder="0" class="form-control currency-input">
                                 </div>
                             </div>
                             <div class="mb-2">

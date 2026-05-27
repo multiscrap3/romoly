@@ -188,9 +188,9 @@ $sumberJson = $sumberTransaksi->map(fn($s) => [
                 <div class="text-center mb-4">
                     <div class="d-flex align-items-baseline justify-content-center gap-2">
                         <span class="text-muted fw-bold" style="font-size:1.4rem;">Rp</span>
-                        <input type="number" name="jumlah" id="jumlahInput"
-                               value="{{ old('jumlah') }}" required min="1"
-                               class="jumlah-input @error('jumlah') border-danger @enderror"
+                        <input type="text" inputmode="numeric" name="jumlah" id="jumlahInput"
+                               value="{{ old('jumlah') }}" required
+                               class="jumlah-input currency-input @error('jumlah') border-danger @enderror"
                                style="max-width:220px;"
                                placeholder="0">
                     </div>
@@ -619,8 +619,11 @@ $sumberJson = $sumberTransaksi->map(fn($s) => [
     updateTransferRow();
 
     // ── Jumlah input ─────────────────────────────────────────
+    function rawJumlah() {
+        return Number(jumlahInput.value.replace(/\./g, '')) || 0;
+    }
     jumlahInput.addEventListener('input', () => {
-        state.jumlah = Number(jumlahInput.value) || 0;
+        state.jumlah = rawJumlah();
         updateSaldoUI();
     });
 
@@ -631,7 +634,7 @@ $sumberJson = $sumberTransaksi->map(fn($s) => [
     });
     // init
     state.selectedSumberId = sumberSelect.value;
-    state.jumlah = Number(jumlahInput.value) || 0;
+    state.jumlah = rawJumlah();
     updateSaldoUI();
 
     // ── Autocomplete ─────────────────────────────────────────
@@ -659,8 +662,8 @@ $sumberJson = $sumberTransaksi->map(fn($s) => [
                         e.preventDefault();
                         keteranganInput.value = s.keterangan;
                         if (s.rata_jumlah) {
-                            jumlahInput.value = Math.round(s.rata_jumlah);
                             state.jumlah = Math.round(s.rata_jumlah);
+                            jumlahInput.value = state.jumlah.toLocaleString('id-ID');
                             updateSaldoUI();
                         }
                         suggestDD.classList.add('d-none');
@@ -771,8 +774,8 @@ $sumberJson = $sumberTransaksi->map(fn($s) => [
                     const s = d.data.suggested_transaksi || {};
 
                     if (r.total) {
-                        jumlahInput.value = r.total;
                         state.jumlah = Number(r.total);
+                        jumlahInput.value = state.jumlah.toLocaleString('id-ID');
                         ocrDetectedJumlah.classList.remove('d-none');
                         document.getElementById('ocrJumlahVal').textContent = fmt(r.total);
                     }

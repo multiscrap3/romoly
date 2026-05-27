@@ -59,9 +59,9 @@
                     <label class="form-label fw-medium">{{ __('anggaran.amount') }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <span class="input-group-text">Rp</span>
-                        <input type="number" name="jumlah" value="{{ old('jumlah') }}" min="0" step="1000" required
+                        <input type="text" inputmode="numeric" name="jumlah" value="{{ old('jumlah') }}" required
                                placeholder="0"
-                               class="form-control @error('jumlah') is-invalid @enderror">
+                               class="form-control currency-input @error('jumlah') is-invalid @enderror">
                         @error('jumlah')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                 </div>

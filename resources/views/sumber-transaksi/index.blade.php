@@ -32,8 +32,8 @@
                     <div class="col-6">
                         <div class="input-group input-group-sm">
                             <span class="input-group-text">Rp</span>
-                            <input type="number" name="saldo" value="{{ old('saldo', 0) }}" min="0"
-                                   placeholder="{{ __('sumber.initial_balance') }}" class="form-control">
+                            <input type="text" inputmode="numeric" name="saldo" value="{{ old('saldo', 0) }}"
+                                   placeholder="{{ __('sumber.initial_balance') }}" class="form-control currency-input">
                         </div>
                     </div>
                 </div>

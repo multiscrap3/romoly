@@ -31,9 +31,9 @@
                     <label class="form-label fw-medium">{{ __('tabungan.target') }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <span class="input-group-text">Rp</span>
-                        <input type="number" name="target" value="{{ old('target') }}" min="0" step="1000" required
+                        <input type="text" inputmode="numeric" name="target" value="{{ old('target') }}" required
                                placeholder="0"
-                               class="form-control @error('target') is-invalid @enderror">
+                               class="form-control currency-input @error('target') is-invalid @enderror">
                         @error('target')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                 </div>

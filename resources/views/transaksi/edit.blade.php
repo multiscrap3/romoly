@@ -112,9 +112,9 @@
                 <div class="text-center mb-4">
                     <div class="d-flex align-items-baseline justify-content-center gap-2">
                         <span class="text-muted fw-bold" style="font-size:1.4rem;">Rp</span>
-                        <input type="number" name="jumlah"
-                               value="{{ old('jumlah', $transaksi->jumlah) }}" required min="1"
-                               class="jumlah-input @error('jumlah') border-danger @enderror"
+                        <input type="text" inputmode="numeric" name="jumlah"
+                               value="{{ old('jumlah', $transaksi->jumlah) }}" required
+                               class="jumlah-input currency-input @error('jumlah') border-danger @enderror"
                                style="max-width:220px;"
                                placeholder="0">
                     </div>

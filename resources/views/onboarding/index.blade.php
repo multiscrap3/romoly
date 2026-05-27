@@ -206,6 +206,44 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+(function () {
+    function parseCurrency(v) {
+        return String(v).replace(/\./g, '').replace(/[^\d]/g, '');
+    }
+    function formatCurrency(v) {
+        var d = parseCurrency(v);
+        return d ? parseInt(d, 10).toLocaleString('id-ID') : '';
+    }
+    document.addEventListener('input', function (e) {
+        var el = e.target;
+        if (!el.classList.contains('currency-input')) return;
+        var start = el.selectionStart;
+        var digitsBeforeCursor = parseCurrency(el.value.substring(0, start)).length;
+        el.value = formatCurrency(el.value);
+        var newPos = 0, count = 0;
+        for (var i = 0; i < el.value.length; i++) {
+            if (el.value[i] !== '.') count++;
+            if (count >= digitsBeforeCursor) { newPos = i + 1; break; }
+        }
+        if (digitsBeforeCursor === 0) newPos = 0;
+        el.setSelectionRange(newPos, newPos);
+    });
+    document.addEventListener('keydown', function (e) {
+        var el = e.target;
+        if (!el.classList.contains('currency-input')) return;
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        var nav = ['Backspace','Delete','Tab','Escape','Enter','Home','End','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'];
+        if (!nav.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
+    });
+    document.addEventListener('submit', function (e) {
+        e.target.querySelectorAll('.currency-input').forEach(function (el) {
+            el.value = parseCurrency(el.value) || '0';
+        });
+    });
+}());
+</script>
+
+<script>
 // ===== STEP 2: Rekening =====
 var rekeningCount = 0;
 function addRekening() {
@@ -232,8 +270,8 @@ function addRekening() {
             </div>
             <div class="col-6">
                 <label class="form-label small fw-medium">Saldo Awal (Rp)</label>
-                <input type="number" name="rekening[${i}][saldo_awal]" min="0"
-                       class="form-control form-control-sm" placeholder="0">
+                <input type="text" inputmode="numeric" name="rekening[${i}][saldo_awal]"
+                       class="form-control form-control-sm currency-input" placeholder="0">
             </div>
         </div>
     </div>`;
@@ -254,8 +292,8 @@ function addAnggaran() {
             </select>
         </div>
         <div style="width:130px;">
-            <input type="number" name="anggaran[${i}][limit]" min="1000" required
-                   class="form-control form-control-sm" placeholder="Limit Rp">
+            <input type="text" inputmode="numeric" name="anggaran[${i}][limit]" required
+                   class="form-control form-control-sm currency-input" placeholder="Limit Rp">
         </div>
         <button type="button" class="btn btn-sm btn-outline-danger"
                 onclick="removeItem('anggaran-${i}')">
@@ -288,8 +326,8 @@ function addRecurring() {
             </div>
             <div class="col-6">
                 <label class="form-label small fw-medium">Jumlah (Rp)</label>
-                <input type="number" name="recurring[${i}][jumlah]" min="1" required
-                       class="form-control form-control-sm" placeholder="500000">
+                <input type="text" inputmode="numeric" name="recurring[${i}][jumlah]" required
+                       class="form-control form-control-sm currency-input" placeholder="500.000">
             </div>
             <div class="col-6">
                 <label class="form-label small fw-medium">Frekuensi</label>

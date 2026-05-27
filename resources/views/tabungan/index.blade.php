@@ -62,8 +62,8 @@
                                     </select>
                                 </div>
                                 <div class="d-flex gap-2">
-                                    <input type="number" name="jumlah" placeholder="{{ __('tabungan.amount') }}" min="1" required
-                                           class="form-control form-control-sm flex-grow-1">
+                                    <input type="text" inputmode="numeric" name="jumlah" placeholder="{{ __('tabungan.amount') }}" required
+                                           class="form-control form-control-sm flex-grow-1 currency-input">
                                     <button type="submit" class="btn btn-sm btn-success">{{ __('tabungan.top_up') }}</button>
                                 </div>
                             </form>

@@ -35,8 +35,8 @@
                     <label class="form-label fw-medium">{{ __('recurring.amount') }}</label>
                     <div class="input-group">
                         <span class="input-group-text">Rp</span>
-                        <input type="number" name="jumlah" value="{{ old('jumlah', $recurring->jumlah) }}" min="1" step="1000"
-                               class="form-control @error('jumlah') is-invalid @enderror">
+                        <input type="text" inputmode="numeric" name="jumlah" value="{{ old('jumlah', $recurring->jumlah) }}"
+                               class="form-control currency-input @error('jumlah') is-invalid @enderror">
                         @error('jumlah')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                 </div>

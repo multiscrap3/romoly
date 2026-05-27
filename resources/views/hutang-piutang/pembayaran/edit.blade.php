@@ -54,9 +54,9 @@
                     <label class="form-label fw-medium">{{ __('hutang.amount') }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <span class="input-group-text">Rp</span>
-                        <input type="number" name="jumlah" min="1" step="any" required
+                        <input type="text" inputmode="numeric" name="jumlah" required
                                value="{{ old('jumlah', $pembayaran->jumlah) }}"
-                               class="form-control @error('jumlah') is-invalid @enderror">
+                               class="form-control currency-input @error('jumlah') is-invalid @enderror">
                         @error('jumlah')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                 </div>
