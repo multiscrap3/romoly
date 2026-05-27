@@ -42,7 +42,6 @@ class AdminUserSeeder extends Seeder
                 'name' => 'Admin Finanku',
                 'password' => 'password',
                 'household_id' => $household->id,
-                'role' => 'owner',
                 'is_active' => true,
             ]
         );

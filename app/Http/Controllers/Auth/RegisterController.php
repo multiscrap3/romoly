@@ -75,7 +75,6 @@ class RegisterController extends Controller
                 'email'                  => $request->email,
                 'password'               => Hash::make($request->password),
                 'household_id'           => $household->id,
-                'role'                   => $role,
                 'is_active'              => true,
                 'consent_given_at'       => now(),
                 'consent_ip'             => $request->ip(),

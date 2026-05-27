@@ -18,7 +18,6 @@ class User extends Authenticatable
         'email',
         'password',
         'household_id',
-        'role',
         'avatar',
         'is_active',
         'dashboard_cards',
