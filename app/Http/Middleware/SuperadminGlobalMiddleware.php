@@ -8,9 +8,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SuperadminGlobalMiddleware
 {
-    /**
-     * Batasi akses halaman/route global hanya untuk superadmin.
-     */
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
@@ -20,7 +17,7 @@ class SuperadminGlobalMiddleware
                 ->with('error', 'Anda harus login terlebih dahulu.');
         }
 
-        if ($user->role !== 'superadmin') {
+        if (!$user->hasRole('superadmin')) {
             abort(403, 'Anda tidak memiliki akses superadmin.');
         }
 
