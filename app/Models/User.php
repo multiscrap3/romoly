@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     protected $fillable = [
         'name',
@@ -113,22 +114,6 @@ class User extends Authenticatable
     public function ocrHistory(): HasMany
     {
         return $this->hasMany(OcrHistory::class);
-    }
-
-    /**
-     * Check apakah user adalah admin household
-     */
-    public function isHouseholdAdmin(): bool
-    {
-        return $this->role === 'admin';
-    }
-
-    /**
-     * Check apakah user adalah owner household
-     */
-    public function isHouseholdOwner(): bool
-    {
-        return $this->role === 'owner';
     }
 
     /**
