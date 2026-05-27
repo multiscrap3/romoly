@@ -79,7 +79,7 @@ class SuperadminController extends Controller
 
     public function toggleUserStatus(Request $request, User $user): RedirectResponse
     {
-        if ($user->role === 'superadmin') {
+        if ($user->hasRole('superadmin')) {
             return back()->with('error', 'Tidak dapat menonaktifkan akun superadmin.');
         }
 

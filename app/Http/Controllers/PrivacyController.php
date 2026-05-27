@@ -45,7 +45,7 @@ class PrivacyController extends Controller
                 'email'            => $user->email,
                 'telepon'          => $user->phone,
                 'tanggal_lahir'    => $user->tanggal_lahir,
-                'peran'            => $user->role,
+                'peran'            => $user->getRoleNames()->implode(', '),
                 'bergabung'        => $user->created_at?->toIso8601String(),
                 'login_terakhir'   => $user->last_login_at?->toIso8601String(),
                 'consent_diberikan' => $user->consent_given_at?->toIso8601String(),
