@@ -6,6 +6,7 @@ use App\Models\Household;
 use App\Models\Plan;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\PermissionRegistrar;
 
 class AdminUserSeeder extends Seeder
 {
@@ -14,6 +15,8 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
         $plan = Plan::where('slug', 'premium')->first()
             ?? Plan::where('slug', 'free')->first()
             ?? Plan::first();
@@ -33,7 +36,7 @@ class AdminUserSeeder extends Seeder
             $household->update(['plan_id' => $plan->id]);
         }
 
-        User::updateOrCreate(
+        $user = User::updateOrCreate(
             ['email' => 'admin@finanku.test'],
             [
                 'name' => 'Admin Finanku',
@@ -43,5 +46,9 @@ class AdminUserSeeder extends Seeder
                 'is_active' => true,
             ]
         );
+
+        if (!$user->hasRole('superadmin')) {
+            $user->assignRole('superadmin');
+        }
     }
 }
