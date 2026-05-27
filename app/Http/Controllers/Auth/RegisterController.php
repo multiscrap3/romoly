@@ -82,6 +82,8 @@ class RegisterController extends Controller
                 'privacy_policy_version' => '1.0',
             ]);
 
+            $user->assignRole($role);
+
             ConsentLog::create([
                 'user_id'        => $user->id,
                 'type'           => 'register',
@@ -105,7 +107,7 @@ class RegisterController extends Controller
 
         $request->session()->regenerate();
 
-        if ($user->role === 'owner') {
+        if ($user->hasRole('owner')) {
             return redirect()->route('onboarding.index')
                 ->with('success', 'Selamat datang di Finanku! Mari mulai setup household Anda.');
         }
