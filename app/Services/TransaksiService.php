@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Storage;
 
 class TransaksiService
 {
+    public function __construct(
+        private readonly XpService $xpService,
+        private readonly MomentumService $momentumService,
+    ) {}
+
     /**
      * Create transaksi baru
      */
@@ -56,6 +61,17 @@ class TransaksiService
             // Attach tags jika ada
             if (!empty($data['tags'])) {
                 $transaksi->tags()->attach($data['tags']);
+            }
+
+            // Award XP dan catat momentum activity
+            $user = auth()->user();
+            if ($user) {
+                $this->xpService->award($user, 'transaction', [
+                    'transaksi_id' => $transaksi->id,
+                    'amount'       => $transaksi->jumlah,
+                    'jenis'        => $transaksi->jenis,
+                ]);
+                $this->momentumService->recordActivity($user, 'transaction_logged');
             }
 
             return $transaksi->load(['kategori', 'sumberTransaksi', 'tags']);
