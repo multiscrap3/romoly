@@ -5,11 +5,13 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CronController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GamificationController;
 use App\Http\Controllers\ImportBankController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\OCRController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\PrivacyController;
+use App\Http\Controllers\SuperadminAiMonitorController;
 use App\Http\Controllers\SuperadminController;
 use App\Http\Controllers\TransaksiController;
 use Illuminate\Support\Facades\Route;
@@ -59,6 +61,12 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 // Authenticated routes
 Route::middleware(['auth'])->group(function () {
     
+    // Gamifikasi
+    Route::prefix('gamifikasi')->name('gamifikasi.')->group(function () {
+        Route::get('/', [GamificationController::class, 'index'])->name('index');
+        Route::get('/review/{id}', [GamificationController::class, 'weeklyReview'])->name('review.show');
+    });
+
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])->name('dashboard.chart-data');
@@ -119,6 +127,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/join', [\App\Http\Controllers\HouseholdController::class, 'join'])->name('join');
         Route::put('/members/{user}/role', [\App\Http\Controllers\HouseholdController::class, 'updateRole'])->name('members.update-role');
         Route::delete('/members/{user}', [\App\Http\Controllers\HouseholdController::class, 'removeMember'])->name('members.remove');
+        Route::delete('/invitations/{invitation}', [\App\Http\Controllers\HouseholdController::class, 'cancelInvitation'])->name('invitations.cancel');
     });
     
     // Settings
@@ -178,6 +187,7 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'superadmi
     Route::put('/users/{user}/status', [SuperadminController::class, 'toggleUserStatus'])->name('users.toggle-status');
     Route::get('/logs', [SuperadminController::class, 'logs'])->name('logs');
     Route::get('/health', [SuperadminController::class, 'health'])->name('health');
+    Route::get('/ai-monitor', [SuperadminAiMonitorController::class, 'index'])->name('ai-monitor');
 });
 
 // API-like routes for AJAX calls
