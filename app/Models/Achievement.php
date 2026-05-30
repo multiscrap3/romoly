@@ -9,13 +9,16 @@ class Achievement extends Model
 {
     protected $fillable = [
         'slug', 'name', 'description', 'category',
-        'tier_type', 'xp_reward', 'condition_type', 'condition_value',
+        'tier_type', 'rarity', 'is_hidden', 'is_major',
+        'xp_reward', 'condition_type', 'condition_value',
     ];
 
     protected function casts(): array
     {
         return [
             'condition_value' => 'array',
+            'is_hidden'       => 'boolean',
+            'is_major'        => 'boolean',
         ];
     }
 

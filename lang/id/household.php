@@ -18,6 +18,7 @@ return [
     'joined_at'      => 'Bergabung pada',
     'pending'        => 'Menunggu konfirmasi',
     'no_members'     => 'Belum ada anggota lain.',
+    'no_pending'     => 'Belum ada undangan yang menunggu.',
     'save'           => 'Simpan',
     'cancel'         => 'Batal',
     'send_invite'    => 'Kirim Undangan',

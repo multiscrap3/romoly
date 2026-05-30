@@ -1,4 +1,4 @@
-<div class="card border-0 text-white"
+<div class="card h-100 border-0 text-white"
      style="background:linear-gradient(135deg,var(--primary) 0%,#217069 100%);border-radius:1rem;">
     <div class="card-body p-4">
         <div class="d-flex justify-content-between align-items-start gap-2">

@@ -134,8 +134,17 @@ completed_at    : (di user_challenges) nullable timestamp
 | Phase 2 — Achievement + Challenge | ✅ Selesai | `785a96a2` |
 | Phase 3 — Insight + Weekly Review | ✅ Selesai | `7a42d20e` |
 | Phase 4 — Controller + Cron + Views | ✅ Selesai | `b60822e8` |
+| Phase 5 — UIUX Polish | ✅ Selesai | — |
 
 **Tests:** 26/26 pass (21 unit + 5 feature)
+
+**Phase 5 mencakup:**
+- Kolom `rarity`, `is_hidden`, `is_major` di tabel `achievements`
+- SVG circular progress ring di `_level_card`
+- CSS glow states di `_momentum_card`
+- Achievement collection grid (earned + locked + hidden) di `index`
+- Major achievement modal (gold/platinum)
+- Navigation menu `Progres Finansial` di sidebar
 
 ---
 
@@ -145,4 +154,6 @@ completed_at    : (di user_challenges) nullable timestamp
 |---|---|
 | `gamifikasi.md` | Filosofi, spec lengkap semua modul |
 | `gamifikasi-context.md` | File ini — keputusan desain & catatan implementasi |
+| `UIUXgame.md` | Filosofi visual & UX guidelines |
+| `UIUXgame-context.md` | Keputusan desain UIUX Phase 5 |
 | `docs/superpowers/plans/2026-05-28-gamification-system.md` | Implementation plan teknis (18 tasks, TDD) |

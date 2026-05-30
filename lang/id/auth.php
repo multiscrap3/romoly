@@ -25,7 +25,7 @@ return [
     'repeat_password'       => 'Ulangi password',
     'consent_text'          => 'Saya telah membaca dan menyetujui',
     'consent_and'           => 'dan',
-    'consent_pdp'           => 'Finanku, serta menyetujui pengolahan data pribadi saya sesuai UU No. 27 Tahun 2022 tentang Perlindungan Data Pribadi.',
+    'consent_pdp'           => 'Romoly, serta menyetujui pengolahan data pribadi saya sesuai UU No. 27 Tahun 2022 tentang Perlindungan Data Pribadi.',
     'register_btn'          => 'Buat Akun',
     'join_btn'              => 'Daftar & Bergabung',
     'already_have_account'  => 'Sudah punya akun?',

@@ -23,7 +23,7 @@ class DataBreachNotification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '[PENTING] Pemberitahuan Insiden Keamanan Data - Finanku',
+            subject: '[PENTING] Pemberitahuan Insiden Keamanan Data - Romoly',
         );
     }
 

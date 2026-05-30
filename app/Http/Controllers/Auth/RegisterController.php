@@ -108,7 +108,7 @@ class RegisterController extends Controller
 
         if ($user->hasRole('owner')) {
             return redirect()->route('onboarding.index')
-                ->with('success', 'Selamat datang di Finanku! Mari mulai setup household Anda.');
+                ->with('success', 'Selamat datang di Romoly! Mari mulai setup household Anda.');
         }
 
         return redirect()->route('dashboard')

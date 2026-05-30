@@ -68,8 +68,9 @@ return [
     'all_rights'      => 'Semua hak dilindungi.',
 
     // Flash messages
-    'profile_settings' => 'Profil & Pengaturan',
-    'logout'           => 'Keluar',
+    'profile_settings'  => 'Profil & Pengaturan',
+    'superadmin_panel'  => 'Panel Superadmin',
+    'logout'            => 'Keluar',
     'notifications'    => 'Notifikasi',
     'toggle_theme'     => 'Ganti Tema',
     'open_menu'        => 'Buka menu',

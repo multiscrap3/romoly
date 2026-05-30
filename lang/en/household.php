@@ -18,6 +18,7 @@ return [
     'joined_at'      => 'Joined on',
     'pending'        => 'Pending confirmation',
     'no_members'     => 'No other members yet.',
+    'no_pending'     => 'No pending invitations.',
     'save'           => 'Save',
     'cancel'         => 'Cancel',
     'send_invite'    => 'Send Invitation',

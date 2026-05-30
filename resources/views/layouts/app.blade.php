@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Dashboard') - Finanku</title>
+    <title>@yield('title', 'Dashboard') - Romoly</title>
     <link rel="shortcut icon" type="image/png" href="{{ asset('favicon.ico') }}">
 
     {{-- Google Fonts --}}
@@ -165,9 +165,9 @@
         <a href="{{ route('dashboard') }}" class="brand-logo">
             <div class="logo-abbr d-flex align-items-center justify-content-center"
                  style="width:47px;height:47px;background:var(--primary);border-radius:12px;">
-                <span style="color:#fff;font-weight:700;font-size:1.2rem;">F</span>
+                <span style="color:#fff;font-weight:700;font-size:1.2rem;">R</span>
             </div>
-            <div class="brand-title ms-2" style="font-size:1.3rem;font-weight:700;">Finanku</div>
+            <div class="brand-title ms-2" style="font-size:1.3rem;font-weight:700;">Romoly</div>
         </a>
         <div class="nav-control">
             <div class="hamburger">
@@ -230,6 +230,13 @@
                                     <i class="bi bi-person-circle text-primary me-2"></i>
                                     {{ __('messages.profile_settings') }}
                                 </a>
+                                @role('superadmin')
+                                <div class="dropdown-divider"></div>
+                                <a href="{{ route('superadmin.dashboard') }}" class="dropdown-item ai-icon">
+                                    <i class="bi bi-shield-lock text-warning me-2"></i>
+                                    {{ __('messages.superadmin_panel') }}
+                                </a>
+                                @endrole
                                 <div class="dropdown-divider"></div>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
@@ -256,9 +263,9 @@
         {{-- Logo di dalam sidebar — hanya tampil di mobile ── --}}
         <div class="dlabnav-mobile-brand">
             <div style="width:38px;height:38px;background:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <span style="color:#fff;font-weight:700;font-size:1.05rem;">F</span>
+                <span style="color:#fff;font-weight:700;font-size:1.05rem;">R</span>
             </div>
-            <span style="font-weight:700;font-size:1.1rem;color:inherit;">Finanku</span>
+            <span style="font-weight:700;font-size:1.1rem;color:inherit;">Romoly</span>
         </div>
 
         <div class="dlabnav-scroll">
@@ -290,6 +297,14 @@
                     <a href="{{ route('laporan.index') }}" aria-expanded="false">
                         <i class="bi bi-bar-chart-line"></i>
                         <span class="nav-text">{{ __('navigation.reports') }}</span>
+                    </a>
+                </li>
+
+                {{-- Gamifikasi --}}
+                <li class="{{ request()->routeIs('gamifikasi.*') ? 'mm-active' : '' }}">
+                    <a href="{{ route('gamifikasi.index') }}" aria-expanded="false">
+                        <i class="bi bi-trophy"></i>
+                        <span class="nav-text">{{ __('navigation.gamification') }}</span>
                     </a>
                 </li>
 
@@ -427,7 +442,7 @@
     <div class="footer">
         <div class="copyright">
             <p class="mb-0">
-                &copy; {{ date('Y') }} <strong>Finanku</strong>. {{ __('messages.footer_tagline') }}
+                &copy; {{ date('Y') }} <strong>Romoly</strong>. {{ __('messages.footer_tagline') }}
                 <span class="ms-2 text-muted" style="font-size:.75rem;">v{{ config('app.version') }}</span>
                 <span class="ms-3" style="font-size:.75rem;">
                     <a href="{{ route('privacy.policy') }}" target="_blank" class="text-muted text-decoration-none me-2">{{ __('messages.privacy_policy') }}</a>
@@ -525,14 +540,14 @@
 
     // ── Dark / Light mode toggle ──────────────────────────────
     (function () {
-        var saved = localStorage.getItem('finanku-theme') || 'light';
+        var saved = localStorage.getItem('romoly-theme') || 'light';
         applyTheme(saved);
 
         $("#darkModeToggle").on("click", function () {
             var current = $("body").attr("data-theme-version") === "dark" ? "dark" : "light";
             var next = current === "dark" ? "light" : "dark";
             applyTheme(next);
-            localStorage.setItem('finanku-theme', next);
+            localStorage.setItem('romoly-theme', next);
         });
 
         function applyTheme(theme) {

@@ -17,7 +17,7 @@ class SettingSeeder extends Seeder
             [
                 'household_id' => null,
                 'key' => 'app_name',
-                'value' => 'FinanKu',
+                'value' => 'Romoly',
                 'type' => 'string',
                 'description' => 'Nama aplikasi',
             ],

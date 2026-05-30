@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Achievement;
 use App\Models\UserAchievement;
 use App\Models\UserChallenge;
 use App\Models\UserGamification;
@@ -36,6 +37,23 @@ class GamificationController extends Controller
             ->orderByDesc('earned_at')
             ->get();
 
+        $earnedMap = $achievements->keyBy('achievement_id');
+
+        $allAchievements = Achievement::orderByRaw("
+            CASE rarity
+                WHEN 'platinum' THEN 1
+                WHEN 'gold'     THEN 2
+                WHEN 'silver'   THEN 3
+                ELSE 4
+            END
+        ")->get();
+
+        $newMajorAchievements = UserAchievement::where('user_id', $user->id)
+            ->where('earned_at', '>=', now()->subMinutes(30))
+            ->whereHas('achievement', fn ($q) => $q->where('is_major', true))
+            ->with('achievement')
+            ->get();
+
         $activeChallenges = UserChallenge::where('user_id', $user->id)
             ->where('expires_at', '>=', now())
             ->whereNull('completed_at')
@@ -50,7 +68,9 @@ class GamificationController extends Controller
 
         return view('gamification.index', compact(
             'gamification', 'progressPercent', 'xpToNext',
-            'momentumStatus', 'achievements', 'activeChallenges', 'latestReview'
+            'momentumStatus', 'achievements', 'earnedMap',
+            'allAchievements', 'newMajorAchievements',
+            'activeChallenges', 'latestReview'
         ));
     }
 

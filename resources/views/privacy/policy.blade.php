@@ -19,7 +19,7 @@
     {{-- 1. Pendahuluan --}}
     <h6 class="fw-bold mb-2">1. Pendahuluan</h6>
     <p class="small text-muted mb-4">
-        Finanku ("kami", "aplikasi") berkomitmen melindungi privasi dan keamanan data pribadi Anda sesuai
+        Romoly ("kami", "aplikasi") berkomitmen melindungi privasi dan keamanan data pribadi Anda sesuai
         <strong>Undang-Undang No. 27 Tahun 2022 tentang Perlindungan Data Pribadi (UU PDP)</strong>.
         Kebijakan ini menjelaskan jenis data yang kami kumpulkan, cara penggunaannya, dan hak-hak Anda sebagai subjek data.
     </p>
@@ -27,7 +27,7 @@
     {{-- 2. Identitas Pengendali Data --}}
     <h6 class="fw-bold mb-2">2. Identitas Pengendali Data</h6>
     <div class="small text-muted mb-4">
-        <p class="mb-1"><strong>Nama Aplikasi:</strong> Finanku</p>
+        <p class="mb-1"><strong>Nama Aplikasi:</strong> Romoly</p>
         <p class="mb-1"><strong>Fungsi:</strong> Manajemen keuangan rumah tangga</p>
         <p class="mb-1"><strong>Kontak DPO (Data Protection Officer):</strong>
             <a href="mailto:finanku.app@gmail.com">finanku.app@gmail.com</a>
@@ -87,7 +87,7 @@
     <h6 class="fw-bold mb-2">6. Pengolahan Data oleh Pihak Ketiga</h6>
     <div class="small text-muted mb-4">
         <p class="mb-2">
-            Finanku menggunakan layanan <strong>Google Gemini API</strong> untuk memproses:
+            Romoly menggunakan layanan <strong>Google Gemini API</strong> untuk memproses:
         </p>
         <ul class="mb-2">
             <li>Gambar struk belanja (fitur OCR) — untuk mengekstrak nominal dan merchant</li>
@@ -156,7 +156,7 @@
     <hr class="my-4">
     <p class="text-center small text-muted mb-0">
         <a href="{{ route('privacy.terms') }}" class="text-decoration-none me-3">{{ __('messages.terms') }}</a>
-        &copy; {{ date('Y') }} Finanku
+        &copy; {{ date('Y') }} Romoly
     </p>
 </div>
 @endsection

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'Finanku') }}</title>
+    <title>{{ config('app.name', 'Romoly') }}</title>
     <link rel="stylesheet" href="{{ asset('dompet/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('dompet/icons/bootstrap-icons/font/bootstrap-icons.css') }}">
     <style>
@@ -18,7 +18,7 @@
                  style="width:72px;height:72px;background:#3b82f6;">
                 <i class="bi bi-wallet2 text-white" style="font-size:2rem;"></i>
             </div>
-            <h1 class="fw-bold fs-3 mb-1">{{ config('app.name', 'Finanku') }}</h1>
+            <h1 class="fw-bold fs-3 mb-1">{{ config('app.name', 'Romoly') }}</h1>
             <p class="text-muted">{{ __('messages.footer_tagline') }}</p>
         </div>
 

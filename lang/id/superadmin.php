@@ -30,4 +30,20 @@ return [
 
     'health_ok'     => 'Semua sistem berjalan normal.',
     'health_issue'  => 'Terdapat masalah pada sistem.',
+
+    'ai_monitor'            => 'AI & OCR Monitor',
+    'ai_calls_today'        => 'Call Hari Ini',
+    'ai_success_rate'       => 'Success Rate',
+    'ai_month_total'        => 'Bulan Ini',
+    'ai_all_time'           => 'All Time',
+    'ai_tokens'             => 'Token',
+    'ai_avg_tokens'         => 'Avg Token/Call',
+    'ai_top_users'          => 'Top Pengguna AI',
+    'ai_top_households'     => 'Top Household AI',
+    'ai_config'             => 'Konfigurasi Gemini',
+    'ai_recent_logs'        => 'Log API Terbaru',
+    'ai_action_ocr'         => 'OCR Struk',
+    'ai_action_suggest'     => 'Suggest Detail',
+    'ai_action_insight'     => 'Insight Keuangan',
+    'ai_action_anomaly'     => 'Deteksi Anomali',
 ];

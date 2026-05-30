@@ -95,6 +95,8 @@ Route::middleware(['auth'])->group(function () {
     
     // Sumber Transaksi
     Route::resource('sumber-transaksi', \App\Http\Controllers\SumberTransaksiController::class)->except(['show']);
+    Route::patch('/sumber-transaksi/{sumberTransaksi}/deactivate', [\App\Http\Controllers\SumberTransaksiController::class, 'deactivate'])->name('sumber-transaksi.deactivate');
+    Route::patch('/sumber-transaksi/{sumberTransaksi}/activate',   [\App\Http\Controllers\SumberTransaksiController::class, 'activate'])->name('sumber-transaksi.activate');
     
     // Anggaran
     Route::resource('anggaran', \App\Http\Controllers\AnggaranController::class);

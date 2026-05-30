@@ -67,6 +67,7 @@ class HouseholdController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
+            'role'  => 'nullable|in:admin,analyst,member,viewer',
         ]);
 
         $household = auth()->user()->household;
@@ -76,48 +77,50 @@ class HouseholdController extends Controller
         }
 
         try {
-            // Check if user exists
-            $user = User::where('email', $request->email)->first();
-
-            if (!$user) {
-                return back()->with('error', 'User dengan email tersebut tidak ditemukan');
-            }
-
-            // Check if user already in a household
-            if ($user->household_id) {
-                return back()->with('error', 'User sudah tergabung dalam household lain');
-            }
-
-            // Check if invitation already exists
+            // Cek apakah sudah ada undangan pending ke email ini
             $existingInvitation = HouseholdInvitation::where('household_id', $household->id)
                 ->where('email', $request->email)
                 ->where('status', 'pending')
                 ->first();
 
             if ($existingInvitation) {
-                return back()->with('error', 'Undangan sudah dikirim sebelumnya');
+                $link = route('register', ['token' => $existingInvitation->token]);
+                return back()->with('invite_link', $link)
+                             ->with('info', 'Undangan sudah pernah dikirim. Salin link di bawah dan bagikan ke ' . $request->email);
             }
 
-            // Create invitation
+            // Cek jika user sudah ada dan sudah di household lain
+            $existingUser = User::where('email', $request->email)->first();
+            if ($existingUser && $existingUser->household_id) {
+                return back()->with('error', 'User sudah tergabung dalam household lain');
+            }
+
+            // Buat undangan (berlaku untuk email terdaftar maupun belum)
             $invitation = HouseholdInvitation::create([
                 'household_id' => $household->id,
-                'email' => $request->email,
-                'token' => Str::random(32),
-                'status' => 'pending',
-                'expired_at' => now()->addDays(7),
+                'email'        => $request->email,
+                'role'         => $request->role ?? 'member',
+                'token'        => Str::random(32),
+                'status'       => 'pending',
+                'invited_by'   => auth()->id(),
+                'expires_at'   => now()->addDays(7),
             ]);
 
-            // Send notification to invited user
-            \App\Models\Notifikasi::create([
-                'household_id' => $household->id,
-                'user_id' => $user->id,
-                'judul' => 'Undangan Household',
-                'pesan' => "Anda diundang untuk bergabung dengan household '{$household->nama}'",
-                'jenis' => 'sistem',
-                'is_read' => false,
-            ]);
+            // Kirim notifikasi in-app jika user sudah punya akun
+            if ($existingUser) {
+                \App\Models\Notifikasi::create([
+                    'household_id' => $household->id,
+                    'user_id'      => $existingUser->id,
+                    'judul'        => 'Undangan Household',
+                    'pesan'        => "Anda diundang untuk bergabung dengan household '{$household->nama}'",
+                    'jenis'        => 'sistem',
+                    'is_read'      => false,
+                ]);
+            }
 
-            return back()->with('success', 'Undangan berhasil dikirim');
+            $link = route('register', ['token' => $invitation->token]);
+            return back()->with('invite_link', $link)
+                         ->with('success', 'Undangan berhasil dibuat. Salin link di bawah dan bagikan ke ' . $request->email);
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal mengirim undangan: ' . $e->getMessage());
         }
@@ -138,7 +141,7 @@ class HouseholdController extends Controller
             return back()->with('error', 'Token undangan tidak valid atau sudah digunakan');
         }
 
-        if ($invitation->expired_at < now()) {
+        if ($invitation->expires_at < now()) {
             $invitation->update(['status' => 'expired']);
             return back()->with('error', 'Undangan sudah kadaluarsa');
         }
@@ -166,7 +169,7 @@ class HouseholdController extends Controller
             return redirect()->route('dashboard')->with('error', 'Undangan tidak valid');
         }
 
-        if ($invitation->expired_at < now()) {
+        if ($invitation->expires_at < now()) {
             $invitation->update(['status' => 'expired']);
             return redirect()->route('dashboard')->with('error', 'Undangan sudah kadaluarsa');
         }
@@ -182,6 +185,26 @@ class HouseholdController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('dashboard')->with('error', 'Gagal bergabung: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Cancel (revoke) a pending invitation
+     */
+    public function cancelInvitation(HouseholdInvitation $invitation)
+    {
+        $household = auth()->user()->household;
+
+        if (!auth()->user()->hasPermissionTo('manage members')) {
+            abort(403);
+        }
+
+        if ($invitation->household_id !== $household->id) {
+            abort(403);
+        }
+
+        $invitation->update(['status' => 'cancelled']);
+
+        return back()->with('success', 'Undangan berhasil dibatalkan');
     }
 
     /**

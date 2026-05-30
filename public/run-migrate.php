@@ -73,7 +73,7 @@ function renderOutput(array $results, bool $hasError): void
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Finanku — Deploy Runner</title>
+    <title>Romoly — Deploy Runner</title>
     <style>
         body { font-family: monospace; background: #0d1117; color: #c9d1d9; padding: 2rem; margin: 0; }
         h2 { color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: .5rem; }
@@ -91,7 +91,7 @@ function renderOutput(array $results, bool $hasError): void
     </style>
 </head>
 <body>
-    <h2>Finanku — Deploy Runner</h2>
+    <h2>Romoly — Deploy Runner</h2>
     <p class="summary">Status: <?= $statusText ?> (<?= $elapsed ?>s)</p>
 
     <?php foreach ($results as $result): ?>

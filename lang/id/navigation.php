@@ -6,6 +6,7 @@ return [
     'all_transactions'   => 'Semua Transaksi',
     'import_bank'        => 'Import Bank',
     'reports'            => 'Laporan',
+    'gamification'       => 'Progres Finansial',
     'budget'             => 'Anggaran',
     'savings'            => 'Tabungan',
     'debt'               => 'Hutang & Piutang',

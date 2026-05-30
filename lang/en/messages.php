@@ -68,8 +68,9 @@ return [
     'all_rights'      => 'All rights reserved.',
 
     // Flash messages
-    'profile_settings' => 'Profile & Settings',
-    'logout'           => 'Logout',
+    'profile_settings'  => 'Profile & Settings',
+    'superadmin_panel'  => 'Superadmin Panel',
+    'logout'            => 'Logout',
     'notifications'    => 'Notifications',
     'toggle_theme'     => 'Toggle Theme',
     'open_menu'        => 'Open menu',

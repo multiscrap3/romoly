@@ -30,4 +30,20 @@ return [
 
     'health_ok'     => 'All systems operating normally.',
     'health_issue'  => 'There is an issue with the system.',
+
+    'ai_monitor'            => 'AI & OCR Monitor',
+    'ai_calls_today'        => 'Calls Today',
+    'ai_success_rate'       => 'Success Rate',
+    'ai_month_total'        => 'This Month',
+    'ai_all_time'           => 'All Time',
+    'ai_tokens'             => 'Tokens',
+    'ai_avg_tokens'         => 'Avg Tokens/Call',
+    'ai_top_users'          => 'Top AI Users',
+    'ai_top_households'     => 'Top AI Households',
+    'ai_config'             => 'Gemini Configuration',
+    'ai_recent_logs'        => 'Recent API Logs',
+    'ai_action_ocr'         => 'OCR Receipt',
+    'ai_action_suggest'     => 'Suggest Detail',
+    'ai_action_insight'     => 'Financial Insight',
+    'ai_action_anomaly'     => 'Anomaly Detection',
 ];

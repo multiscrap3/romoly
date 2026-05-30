@@ -228,7 +228,7 @@ class ExportService
     public function generateFilename(string $type, string $extension, array $params = []): string
     {
         $timestamp = Carbon::now()->format('YmdHis');
-        $household = auth()->user()->household->nama ?? 'Finanku';
+        $household = auth()->user()->household->nama ?? 'Romoly';
         $household = preg_replace('/[^A-Za-z0-9\-]/', '_', $household);
 
         $filename = "{$household}_{$type}_{$timestamp}";

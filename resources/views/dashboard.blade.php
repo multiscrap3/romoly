@@ -7,7 +7,9 @@
 <style>
 /* ── Widget grid ── */
 #widgetGrid { position: relative; }
-.widget-item { position: relative; transition: opacity .2s; }
+.widget-item { position: relative; transition: opacity .2s; display: flex; flex-direction: column; }
+.widget-item > .card,
+.widget-item > a   { flex: 1 0 auto; }
 
 /* ── Height classes (applied to widget-item) ── */
 .widget-height-compact { max-height: 200px; overflow: hidden; }

@@ -39,7 +39,7 @@ class AdminUserSeeder extends Seeder
         $user = User::updateOrCreate(
             ['email' => 'admin@finanku.test'],
             [
-                'name' => 'Admin Finanku',
+                'name' => 'Admin Romoly',
                 'password' => 'password',
                 'household_id' => $household->id,
                 'is_active' => true,

@@ -25,7 +25,7 @@ return [
     'repeat_password'       => 'Repeat password',
     'consent_text'          => 'I have read and agreed to the',
     'consent_and'           => 'and',
-    'consent_pdp'           => 'of Finanku, and I consent to the processing of my personal data.',
+    'consent_pdp'           => 'of Romoly, and I consent to the processing of my personal data.',
     'register_btn'          => 'Create Account',
     'join_btn'              => 'Register & Join',
     'already_have_account'  => 'Already have an account?',

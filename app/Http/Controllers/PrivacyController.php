@@ -74,7 +74,7 @@ class PrivacyController extends Controller
         // G3: log setiap kali user export data pribadi
         SecurityLog::record('data_export', 'low', ['user_id' => $user->id]);
 
-        $filename = 'finanku-data-pribadi-' . now()->format('Ymd-His') . '.json';
+        $filename = 'romoly-data-pribadi-' . now()->format('Ymd-His') . '.json';
         $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
         return response($json, 200, [

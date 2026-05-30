@@ -174,7 +174,7 @@ class OnboardingController extends Controller
         session()->forget('onboarding_step');
 
         return redirect()->route('dashboard')
-            ->with('success', 'Setup selesai! Selamat menggunakan Finanku.');
+            ->with('success', 'Setup selesai! Selamat menggunakan Romoly.');
     }
 
     public function skip(Request $request): RedirectResponse

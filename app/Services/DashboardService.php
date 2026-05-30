@@ -35,6 +35,7 @@ class DashboardService
     protected function getTotalSaldo(): float
     {
         return SumberTransaksi::where('household_id', $this->householdId())
+            ->where('is_active', true)
             ->sum('saldo_saat_ini');
     }
 
@@ -217,6 +218,7 @@ class DashboardService
     public function getSaldoPerSumber(): array
     {
         $sumber = SumberTransaksi::where('household_id', $this->householdId())
+            ->where('is_active', true)
             ->orderBy('saldo_saat_ini', 'desc')
             ->get();
 

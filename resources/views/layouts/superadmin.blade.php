@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Superadmin') - Finanku Admin</title>
+    <title>@yield('title', 'Superadmin') - Romoly Admin</title>
     <link rel="shortcut icon" type="image/png" href="{{ asset('favicon.ico') }}">
 
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800" rel="stylesheet">
@@ -45,10 +45,10 @@
         <a href="{{ route('superadmin.dashboard') }}" class="brand-logo">
             <div class="logo-abbr d-flex align-items-center justify-content-center"
                  style="width:47px;height:47px;background:#7C3AED;border-radius:12px;">
-                <span style="color:#fff;font-weight:700;font-size:1.2rem;">F</span>
+                <span style="color:#fff;font-weight:700;font-size:1.2rem;">R</span>
             </div>
             <div class="brand-title ms-2" style="font-size:1.1rem;font-weight:700;color:#c4b5fd;">
-                Finanku <span class="superadmin-badge">Admin</span>
+                Romoly <span class="superadmin-badge">Admin</span>
             </div>
         </a>
         <div class="nav-control">
@@ -141,6 +141,13 @@
                     </a>
                 </li>
 
+                <li class="{{ request()->routeIs('superadmin.ai-monitor') ? 'mm-active' : '' }}">
+                    <a href="{{ route('superadmin.ai-monitor') }}">
+                        <i class="bi bi-robot"></i>
+                        <span class="nav-text">AI & OCR Monitor</span>
+                    </a>
+                </li>
+
             </ul>
         </div>
     </div>
@@ -175,7 +182,7 @@
         <div class="footer">
             <div class="copyright">
                 <p class="mb-0">
-                    &copy; {{ date('Y') }} <strong>Finanku</strong> — Superadmin Panel
+                    &copy; {{ date('Y') }} <strong>Romoly</strong> — Superadmin Panel
                     <span class="ms-2 text-muted" style="font-size:.75rem;">v{{ config('app.version') }}</span>
                 </p>
             </div>

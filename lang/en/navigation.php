@@ -6,6 +6,7 @@ return [
     'all_transactions'   => 'All Transactions',
     'import_bank'        => 'Import Bank',
     'reports'            => 'Reports',
+    'gamification'       => 'Financial Progress',
     'budget'             => 'Budget',
     'savings'            => 'Savings',
     'debt'               => 'Debt & Receivables',

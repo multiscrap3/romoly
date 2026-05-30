@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', __('auth.login_btn')) - Finanku</title>
+    <title>@yield('title', __('auth.login_btn')) - Romoly</title>
     <link rel="shortcut icon" type="image/png" href="{{ asset('favicon.ico') }}">
 
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800" rel="stylesheet">
@@ -29,7 +29,7 @@
                              style="width:48px;height:48px;background:rgba(255,255,255,0.2);">
                             <i class="bi bi-wallet2 text-white" style="font-size:1.4rem;"></i>
                         </div>
-                        <span class="text-white fw-bold fs-4">Finanku</span>
+                        <span class="text-white fw-bold fs-4">Romoly</span>
                     </a>
 
                     <h2 class="text-white fw-bold mb-3" style="font-size:2rem;line-height:1.3;">
@@ -74,7 +74,7 @@
                 </div>
 
                 <p class="px-5 pb-4 mb-0" style="color:rgba(255,255,255,.45);font-size:.8rem;">
-                    &copy; {{ date('Y') }} Finanku. {{ __('messages.all_rights') }}
+                    &copy; {{ date('Y') }} Romoly. {{ __('messages.all_rights') }}
                     &nbsp;&middot;&nbsp; v{{ config('app.version') }}
                     &nbsp;&middot;&nbsp;
                     <a href="{{ route('privacy.policy') }}" style="color:rgba(255,255,255,.45);">{{ __('messages.privacy_policy') }}</a>
@@ -94,7 +94,7 @@
                              style="width:36px;height:36px;background:var(--primary);">
                             <i class="bi bi-wallet2 text-white"></i>
                         </div>
-                        <span class="fw-bold fs-5" style="color:var(--primary);">Finanku</span>
+                        <span class="fw-bold fs-5" style="color:var(--primary);">Romoly</span>
                     </div>
 
                     {{-- Error Validasi --}}

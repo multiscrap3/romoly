@@ -18,13 +18,13 @@
 
     <h6 class="fw-bold mb-2">1. Penerimaan Syarat</h6>
     <p class="small text-muted mb-4">
-        Dengan mendaftar dan menggunakan Finanku, Anda menyatakan telah membaca, memahami, dan
+        Dengan mendaftar dan menggunakan Romoly, Anda menyatakan telah membaca, memahami, dan
         menyetujui Syarat & Ketentuan ini. Jika Anda tidak setuju, jangan gunakan layanan ini.
     </p>
 
     <h6 class="fw-bold mb-2">2. Deskripsi Layanan</h6>
     <p class="small text-muted mb-4">
-        Finanku adalah aplikasi manajemen keuangan rumah tangga yang memungkinkan pengguna mencatat
+        Romoly adalah aplikasi manajemen keuangan rumah tangga yang memungkinkan pengguna mencatat
         transaksi, membuat anggaran, melacak tabungan, dan mendapatkan laporan keuangan bersama anggota
         rumah tangga (household).
     </p>
@@ -71,7 +71,7 @@
     <h6 class="fw-bold mb-2">7. Batasan Tanggung Jawab</h6>
     <div class="small text-muted mb-4">
         <ul class="mb-0">
-            <li>Finanku disediakan "sebagaimana adanya" tanpa jaminan apapun</li>
+            <li>Romoly disediakan "sebagaimana adanya" tanpa jaminan apapun</li>
             <li>Kami tidak bertanggung jawab atas kerugian akibat keputusan keuangan berdasarkan data di aplikasi</li>
             <li>Kami tidak menjamin ketersediaan layanan 100% tanpa gangguan</li>
         </ul>
@@ -79,7 +79,7 @@
 
     <h6 class="fw-bold mb-2">8. Hak Kekayaan Intelektual</h6>
     <p class="small text-muted mb-4">
-        Seluruh konten, antarmuka, dan kode Finanku adalah milik pengembang dan dilindungi oleh hukum
+        Seluruh konten, antarmuka, dan kode Romoly adalah milik pengembang dan dilindungi oleh hukum
         kekayaan intelektual yang berlaku. Pengguna tidak diizinkan menyalin, memodifikasi, atau
         mendistribusikan aplikasi tanpa izin tertulis.
     </p>
@@ -106,7 +106,7 @@
     <hr class="my-4">
     <p class="text-center small text-muted mb-0">
         <a href="{{ route('privacy.policy') }}" class="text-decoration-none me-3">{{ __('messages.privacy_policy') }}</a>
-        &copy; {{ date('Y') }} Finanku
+        &copy; {{ date('Y') }} Romoly
     </p>
 </div>
 @endsection
