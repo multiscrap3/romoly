@@ -3,7 +3,11 @@ deployment:
   tasks:
     - /opt/cpanel/ea-php84/root/usr/bin/php composer.phar install --no-dev --no-interaction --prefer-dist
     - chmod -R 755 storage bootstrap/cache
+    - /opt/cpanel/ea-php84/root/usr/bin/php artisan storage:link
+    - /opt/cpanel/ea-php84/root/usr/bin/php artisan migrate --force --no-interaction
+    - /opt/cpanel/ea-php84/root/usr/bin/php artisan db:seed --force --no-interaction
     - /opt/cpanel/ea-php84/root/usr/bin/php artisan config:cache
     - /opt/cpanel/ea-php84/root/usr/bin/php artisan route:cache
     - /opt/cpanel/ea-php84/root/usr/bin/php artisan view:cache
-    - /opt/cpanel/ea-php84/root/usr/bin/php artisan migrate --force --no-interaction
+    - /opt/cpanel/ea-php84/root/usr/bin/php artisan event:cache
+    - /opt/cpanel/ea-php84/root/usr/bin/php artisan permission:cache-reset
