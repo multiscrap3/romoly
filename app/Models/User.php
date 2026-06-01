@@ -22,6 +22,7 @@ class User extends Authenticatable
         'avatar',
         'is_active',
         'dashboard_cards',
+        'tour_progress',
         'consent_given_at',
         'consent_ip',
         'privacy_policy_version',
@@ -39,9 +40,69 @@ class User extends Authenticatable
             'password'           => 'hashed',
             'is_active'          => 'boolean',
             'dashboard_cards'    => 'array',
+            'tour_progress'      => 'array',
             'consent_given_at'   => 'datetime',
             'last_login_at'      => 'datetime',
         ];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Guided Tour / User Guide (kolom JSON tour_progress)
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Apakah user sudah pernah melihat tour untuk key tertentu (nama route / 'welcome').
+     */
+    public function hasSeenTour(string $key): bool
+    {
+        if ($key === 'welcome') {
+            return (bool) ($this->tour_progress['welcome_completed'] ?? false);
+        }
+
+        return in_array($key, $this->tour_progress['seen'] ?? [], true);
+    }
+
+    /**
+     * Tandai sebuah tour halaman sudah dilihat/dilewati.
+     */
+    public function markTourSeen(string $key): void
+    {
+        $progress = $this->tour_progress ?? [];
+        $seen     = $progress['seen'] ?? [];
+
+        if (! in_array($key, $seen, true)) {
+            $seen[] = $key;
+        }
+
+        $progress['seen']       = array_values($seen);
+        $progress['updated_at'] = now()->toIso8601String();
+
+        $this->tour_progress = $progress;
+        $this->save();
+    }
+
+    /**
+     * Tandai tour global "welcome" sudah selesai.
+     */
+    public function markWelcomeTourCompleted(): void
+    {
+        $progress = $this->tour_progress ?? [];
+        $progress['welcome_completed'] = true;
+        $progress['updated_at']        = now()->toIso8601String();
+
+        $this->tour_progress = $progress;
+        $this->save();
+    }
+
+    /**
+     * Reset seluruh progress tour (untuk fitur "Putar ulang panduan").
+     */
+    public function resetTour(): void
+    {
+        $this->tour_progress = null;
+        $this->save();
     }
 
     /**

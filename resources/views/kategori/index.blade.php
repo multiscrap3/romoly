@@ -67,7 +67,7 @@
 
     <div class="d-flex justify-content-between align-items-center mb-2">
         <h6 class="fw-semibold mb-0">{{ __('kategori.all') }} ({{ $parents->count() }})</h6>
-        <button class="btn btn-primary btn-sm" type="button" id="btnToggleTambah"
+        <button class="btn btn-primary btn-sm" type="button" id="btnToggleTambah" data-tour="kategori-add"
                 onclick="var f=document.getElementById('formTambah');f.style.display=f.style.display==='none'?'block':'none';">
             + {{ __('kategori.add') }}
         </button>

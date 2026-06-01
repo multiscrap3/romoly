@@ -7,7 +7,7 @@
 <div class="row g-4">
 
     <div class="col-12 d-flex justify-content-end">
-        <a href="{{ route('tabungan.create') }}" class="btn btn-primary btn-sm">
+        <a href="{{ route('tabungan.create') }}" class="btn btn-primary btn-sm" data-tour="tabungan-add">
             <i class="bi bi-plus-lg me-1"></i>{{ __('tabungan.add') }}
         </a>
     </div>
@@ -36,7 +36,7 @@
                         <span class="text-muted">{{ __('tabungan.saved') }}</span>
                         <span class="fw-bold text-primary">Rp {{ number_format($item->terkumpul ?? 0, 0, ',', '.') }}</span>
                     </div>
-                    <div class="progress mb-2" style="height:8px;">
+                    <div class="progress mb-2" style="height:8px;" data-tour="tabungan-progress">
                         <div class="progress-bar bg-primary" role="progressbar"
                              style="width:{{ $persen }}%"></div>
                     </div>

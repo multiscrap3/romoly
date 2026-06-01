@@ -26,6 +26,9 @@
     {{-- Dompet Core CSS (Bootstrap 5 sudah di-bundle di dalamnya) --}}
     <link rel="stylesheet" href="{{ asset('dompet/css/style.css') }}">
 
+    {{-- Driver.js — Guided Tour / User Guide --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css">
+
     <style>
     /* ============================================================
        MOBILE RESPONSIVE — SIDEBAR OVERLAY & LAYOUT FIXES
@@ -152,11 +155,37 @@
     #fab-main.fab-open { transform:rotate(45deg); }
     #fab-overlay { display:none; position:fixed; inset:0; z-index:1039; }
     #fab-overlay.fab-open { display:block; }
+
+    /* ── Driver.js (Guided Tour): z-index di atas sidebar mobile (1056) & dark mode ── */
+    .driver-popover { z-index: 100000 !important; }
+    .driver-overlay { z-index: 99999 !important; }
+    [data-theme-version="dark"] .driver-popover {
+        background-color: #1e2130;
+        color: #e7e9ee;
+    }
+    [data-theme-version="dark"] .driver-popover .driver-popover-title { color: #fff; }
+    [data-theme-version="dark"] .driver-popover .driver-popover-description { color: #c5c8d3; }
+    [data-theme-version="dark"] .driver-popover-arrow-side-left.driver-popover-arrow { border-left-color: #1e2130; }
+    [data-theme-version="dark"] .driver-popover-arrow-side-right.driver-popover-arrow { border-right-color: #1e2130; }
+    [data-theme-version="dark"] .driver-popover-arrow-side-top.driver-popover-arrow { border-top-color: #1e2130; }
+    [data-theme-version="dark"] .driver-popover-arrow-side-bottom.driver-popover-arrow { border-bottom-color: #1e2130; }
+    .driver-popover-next-btn, .driver-popover-prev-btn {
+        text-shadow: none !important;
+        background: var(--primary) !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 6px !important;
+    }
+    .driver-popover-prev-btn { background: #e5e7eb !important; color: #374151 !important; }
     </style>
 
     @stack('styles')
 </head>
-<body data-sidebar-style="full" data-layout="vertical" data-header-position="fixed" data-container="wide" data-primary="color_1">
+<body data-sidebar-style="full" data-layout="vertical" data-header-position="fixed" data-container="wide" data-primary="color_1"
+      data-tour-route="{{ Route::currentRouteName() }}"
+      data-tour-seen='@json(auth()->user()->tour_progress["seen"] ?? [])'
+      data-tour-welcome='@json(auth()->user()->tour_progress["welcome_completed"] ?? false)'
+      data-user-roles='@json(auth()->user()->getRoleNames())'>
 
 <div id="main-wrapper" class="show">
 
@@ -193,19 +222,30 @@
                         <div class="dashboard_bar">@yield('page-title', 'Dashboard')</div>
                     </div>
 
-                    {{-- Kanan: notifikasi + dark toggle + user --}}
+                    {{-- Kanan: panduan + notifikasi + dark toggle + user --}}
                     <ul class="navbar-nav header-right">
+
+                        {{-- Panduan (Guided Tour replay) --}}
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0);"
+                               onclick="window.RomolyTour && window.RomolyTour.replay()"
+                               title="{{ __('tour.common.replay_title') }}">
+                                <i class="bi bi-question-circle fs-5"></i>
+                            </a>
+                        </li>
 
                         {{-- Notifikasi --}}
                         <li class="nav-item dropdown notification_dropdown">
-                            <a class="nav-link" href="{{ route('notifikasi.index') }}" title="{{ __('messages.notifications') }}">
+                            <a class="nav-link" href="{{ route('notifikasi.index') }}" title="{{ __('messages.notifications') }}"
+                               data-tour="topbar-notif">
                                 <i class="bi bi-bell fs-5"></i>
                             </a>
                         </li>
 
                         {{-- Dark / Light Toggle --}}
                         <li class="nav-item">
-                            <a class="nav-link" href="javascript:void(0);" id="darkModeToggle" title="{{ __('messages.toggle_theme') }}">
+                            <a class="nav-link" href="javascript:void(0);" id="darkModeToggle" title="{{ __('messages.toggle_theme') }}"
+                               data-tour="topbar-theme">
                                 <i class="bi bi-moon-stars-fill fs-5" id="darkModeIcon"></i>
                             </a>
                         </li>
@@ -213,7 +253,8 @@
                         {{-- User Dropdown --}}
                         <li class="nav-item dropdown header-profile">
                             <a class="nav-link" href="#" role="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">
+                               data-bs-toggle="dropdown" aria-expanded="false"
+                               data-tour="topbar-profile">
                                 <div class="header-info d-flex align-items-center gap-2">
                                     <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white"
                                          style="width:38px;height:38px;font-weight:600;font-size:.9rem;">
@@ -258,7 +299,7 @@
     <div id="mobile-nav-backdrop"></div>
 
     {{-- ===== SIDEBAR / DLABNAV ===== --}}
-    <div class="dlabnav">
+    <div class="dlabnav" data-tour="nav-sidebar">
 
         {{-- Logo di dalam sidebar — hanya tampil di mobile ── --}}
         <div class="dlabnav-mobile-brand">
@@ -302,7 +343,7 @@
 
                 {{-- Gamifikasi --}}
                 <li class="{{ request()->routeIs('gamifikasi.*') ? 'mm-active' : '' }}">
-                    <a href="{{ route('gamifikasi.index') }}" aria-expanded="false">
+                    <a href="{{ route('gamifikasi.index') }}" aria-expanded="false" data-tour="nav-gamifikasi">
                         <i class="bi bi-trophy"></i>
                         <span class="nav-text">{{ __('navigation.gamification') }}</span>
                     </a>
@@ -477,7 +518,7 @@
             </a>
         </div>
     </div>
-    <button id="fab-main" type="button" onclick="toggleFab()" title="{{ __('navigation.add_transaction') }}">
+    <button id="fab-main" type="button" onclick="toggleFab()" title="{{ __('navigation.add_transaction') }}" data-tour="fab-add">
         <i class="fas fa-plus"></i>
     </button>
 </div>
@@ -587,6 +628,9 @@
         document.getElementById('fab-overlay').classList.remove('fab-open');
     }
 </script>
+
+{{-- Guided Tour / User Guide (push driver.js + i18n + engine ke stack 'scripts') --}}
+@include('partials.tour')
 
 @stack('scripts')
 

@@ -76,7 +76,7 @@
         <div class="card border-0 shadow-sm" style="border-radius:.75rem;">
             <div class="card-body p-4">
                 <h6 class="fw-semibold mb-3">{{ __('household.invite') }}</h6>
-                <form method="POST" action="{{ route('household.invite') }}" class="d-flex gap-2">
+                <form method="POST" action="{{ route('household.invite') }}" class="d-flex gap-2" data-tour="household-invite">
                     @csrf
                     <input type="email" name="email" required placeholder="{{ __('household.invite_email') }}"
                            class="form-control form-control-sm flex-grow-1">
@@ -96,7 +96,7 @@
     <div class="card border-0 shadow-sm" style="border-radius:.75rem;">
         <div class="card-body p-4">
             <h6 class="fw-semibold mb-3">{{ __('household.invite') }}</h6>
-            <form method="POST" action="{{ route('household.join') }}" class="d-flex gap-2">
+            <form method="POST" action="{{ route('household.join') }}" class="d-flex gap-2" data-tour="household-join">
                 @csrf
                 <input type="text" name="token" required placeholder="{{ __('household.invite_email') }}"
                        class="form-control form-control-sm flex-grow-1">

@@ -11,7 +11,7 @@
     <div class="card border-0 shadow-sm" style="border-radius:.75rem;">
         <div class="card-body p-4">
             <h6 class="fw-semibold mb-3">{{ __('tags.add') }}</h6>
-            <form method="POST" action="{{ route('tags.store') }}" class="d-flex align-items-end gap-2">
+            <form method="POST" action="{{ route('tags.store') }}" class="d-flex align-items-end gap-2" data-tour="tags-add">
                 @csrf
                 <div class="flex-grow-1">
                     <input type="text" name="nama" value="{{ old('nama') }}" required placeholder="{{ __('tags.name_ph') }}"

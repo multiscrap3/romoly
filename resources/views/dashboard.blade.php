@@ -183,7 +183,8 @@ body.dashboard-editing .widget-item .widget-hide-btn  { display: flex; }
     </div>
     <div class="d-flex gap-2">
         <button type="button" id="btnEditLayout"
-                class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1">
+                class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+                data-tour="dash-edit-layout">
             <i class="bi bi-grid"></i>
             <span class="d-none d-sm-inline">{{ __('dashboard.edit_layout') }}</span>
         </button>
@@ -206,6 +207,7 @@ body.dashboard-editing .widget-item .widget-hide-btn  { display: flex; }
         @endphp
         <div class="widget-item{{ $hClass }} {{ $colClass }}{{ !$widget['visible'] ? ' d-none' : '' }}"
              data-widget-id="{{ $widget['id'] }}"
+             data-tour="dash-{{ str_replace('_', '-', $widget['id']) }}"
              data-visible="{{ $widget['visible'] ? '1' : '0' }}"
              data-width="{{ $widget['width'] }}"
              data-height="{{ $widget['height'] }}">

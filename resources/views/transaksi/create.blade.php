@@ -92,7 +92,7 @@ $sumberJson = $sumberTransaksi->map(fn($s) => [
     <div class="col-12 col-lg-5">
 
         {{-- OCR Banner --}}
-        <div class="card border-0 shadow-sm mb-3" style="border-radius:.75rem;">
+        <div class="card border-0 shadow-sm mb-3" style="border-radius:.75rem;" data-tour="tx-ocr">
             <div class="card-body p-3">
                 <div class="d-flex align-items-center gap-3">
                     <div class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
@@ -155,7 +155,7 @@ $sumberJson = $sumberTransaksi->map(fn($s) => [
 
                 {{-- Jenis Transaksi --}}
                 <div class="section-label">{{ __('transaksi.transaction_type') }}</div>
-                <div class="row g-2 mb-4">
+                <div class="row g-2 mb-4" data-tour="tx-jenis">
                     <div class="col-4">
                         <input type="radio" class="btn-check" name="jenis" id="jenisPengeluaran" value="pengeluaran"
                                {{ old('jenis', request('jenis', 'pengeluaran')) === 'pengeluaran' ? 'checked' : '' }}>
@@ -189,7 +189,7 @@ $sumberJson = $sumberTransaksi->map(fn($s) => [
                     <div class="d-flex align-items-baseline justify-content-center gap-2">
                         <span class="text-muted fw-bold" style="font-size:1.4rem;">Rp</span>
                         <input type="text" inputmode="numeric" name="jumlah" id="jumlahInput"
-                               value="{{ old('jumlah') }}" required
+                               value="{{ old('jumlah') }}" required data-tour="tx-jumlah"
                                class="jumlah-input currency-input @error('jumlah') border-danger @enderror"
                                style="max-width:220px;"
                                placeholder="0">
@@ -235,7 +235,7 @@ $sumberJson = $sumberTransaksi->map(fn($s) => [
                             <i class="bi bi-chat-left-text text-muted"></i>
                         </span>
                         <input type="text" name="keterangan" id="keteranganInput"
-                               value="{{ old('keterangan') }}"
+                               value="{{ old('keterangan') }}" data-tour="tx-keterangan"
                                class="form-control border-start-0 ps-0"
                                placeholder="{{ __('transaksi.description_ph') }}" autocomplete="off"
                                style="border-left:none;">
@@ -253,7 +253,7 @@ $sumberJson = $sumberTransaksi->map(fn($s) => [
                             {{ __('transaksi.category') }} <span class="text-danger">*</span>
                             <span id="ocrKategoriLabel" class="d-none badge bg-success-subtle text-success fw-normal ms-1" style="font-size:.7rem;">{{ __('transaksi.from_ocr') }}</span>
                         </label>
-                        <select name="kategori_id" id="kategoriSelect" required
+                        <select name="kategori_id" id="kategoriSelect" required data-tour="tx-kategori"
                                 class="form-select @error('kategori_id') is-invalid @enderror">
                             <option value="">{{ __('transaksi.category_ph') }}</option>
                             @foreach($kategori as $kat)
@@ -277,7 +277,7 @@ $sumberJson = $sumberTransaksi->map(fn($s) => [
                         <label class="form-label fw-medium">
                             {{ __('transaksi.source') }} <span class="text-danger">*</span>
                         </label>
-                        <select name="sumber_transaksi_id" id="sumberSelect" required
+                        <select name="sumber_transaksi_id" id="sumberSelect" required data-tour="tx-sumber"
                                 class="form-select @error('sumber_transaksi_id') is-invalid @enderror">
                             <option value="">{{ __('transaksi.source_ph') }}</option>
                             @foreach($sumberTransaksi as $s)
@@ -395,7 +395,7 @@ $sumberJson = $sumberTransaksi->map(fn($s) => [
                class="btn btn-light fw-medium flex-shrink-0">
                 <i class="bi bi-arrow-left me-1"></i>{{ __('transaksi.cancel') }}
             </a>
-            <button type="submit" class="btn btn-primary fw-semibold flex-grow-1" id="submitBtn">
+            <button type="submit" class="btn btn-primary fw-semibold flex-grow-1" id="submitBtn" data-tour="tx-submit">
                 <i class="bi bi-check-lg me-2"></i>{{ __('transaksi.save') }}
             </button>
         </div>

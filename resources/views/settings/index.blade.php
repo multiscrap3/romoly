@@ -11,7 +11,7 @@
     {{-- Nav tabs — scrollable horizontal di mobile --}}
     <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:1.25rem;">
         <ul class="nav nav-pills flex-nowrap gap-1 pb-1" id="settingsTabs" role="tablist"
-            style="min-width:max-content;">
+            style="min-width:max-content;" data-tour="settings-profile">
             @foreach([
                 'profil'    => __('settings.tab_profile'),
                 'password'  => __('settings.tab_password'),
@@ -22,6 +22,7 @@
                 <li class="nav-item" role="presentation">
                     <button class="nav-link {{ $activeTab === $t ? 'active' : '' }}"
                             id="{{ $t }}-tab"
+                            @if($t === 'preferensi') data-tour="settings-preferensi" @endif
                             data-bs-toggle="pill"
                             data-bs-target="#tab-{{ $t }}"
                             type="button" role="tab"
@@ -54,6 +55,16 @@
                         </div>
                         <button type="submit" class="btn btn-primary">{{ __('settings.save') }}</button>
                     </form>
+
+                    {{-- Putar ulang panduan (Guided Tour) --}}
+                    <div class="mt-4 pt-4 border-top" data-tour="settings-replay-tour">
+                        <h6 class="fw-semibold mb-1">{{ __('tour.common.replay_button') }}</h6>
+                        <p class="text-muted small mb-2">{{ __('tour.common.replay_title') }}</p>
+                        <button type="button" class="btn btn-outline-primary btn-sm"
+                                onclick="window.RomolyTour && window.RomolyTour.reset()">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>{{ __('tour.common.replay_button') }}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

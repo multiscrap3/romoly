@@ -1,5 +1,7 @@
 # Changelog — FinanKu
 
+> Referenced by: [[CLAUDE]] · [[context-index]]
+
 Semua perubahan penting pada aplikasi FinanKu didokumentasikan di file ini.
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
@@ -14,6 +16,24 @@ dan project ini menggunakan [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Controllers: KategoriController, SumberTransaksiController, HutangPiutangController, RecurringTransaksiController, TagController, HouseholdController, SettingController, NotifikasiController, AuthController, ProfileController
 - Services: HutangPiutangService, NotifikasiService, ExportService, ImportService, RecurringService
 - Form Requests: StoreTabunganRequest, StoreHutangPiutangRequest, UpdateProfileRequest, UpdatePasswordRequest, JoinHouseholdRequest, ImportFileRequest
+
+---
+
+## [1.5.0] — 2026-06-01
+
+### Added
+- **Guided Tour / User Guide interaktif** untuk user baru (berbasis [Driver.js](https://driverjs.com) via CDN). Saat pertama kali membuka sebuah halaman, tour otomatis menyorot elemen UI satu per satu dengan tooltip penjelas ("Tombol ini untuk menambah transaksi", "Kotak ini menampilkan total saldo kamu", dll), berjalan step-by-step (Lanjut/Kembali/Lewati). Tour tidak diulang setelah dilihat.
+  - **Tour global "Selamat datang"** (sekali seumur akun, di Dashboard): menu sidebar, FAB tambah transaksi, notifikasi, tema, profil, menu gamifikasi.
+  - **Tour per-halaman**: Dashboard + semua halaman utama (Transaksi index & create/OCR, Anggaran, Tabungan, Hutang-Piutang, Recurring, Kategori, Sumber Dana, Tags, Laporan, Gamifikasi, Import Bank, Household, Notifikasi, Settings).
+  - **Tombol "Panduan"** (ikon `?`) di topbar untuk memutar ulang tour halaman aktif; **"Putar ulang panduan"** di Settings → Profil untuk reset seluruh progress.
+- **Penyimpanan progress per-user**: kolom JSON `users.tour_progress` (`welcome_completed`, `seen[]`, `updated_at`) + helper di model User (`hasSeenTour`, `markTourSeen`, `markWelcomeTourCompleted`, `resetTour`).
+- **Endpoint AJAX** (di `web.php` prefix `/api`, middleware `auth`): `POST /api/tour/seen`, `POST /api/tour/welcome`, `DELETE /api/tour/reset` (`TourController`).
+- **Internationalization penuh (ID + EN)**: seluruh copy tour di `lang/id/tour.php` & `lang/en/tour.php` (sumber tunggal langkah — `tour`/`title`/`body`/`roles` per langkah).
+- **RBAC-aware**: langkah aksi-tulis (tambah/edit) otomatis dilewati untuk role `viewer`; superadmin melihat semua. Langkah dengan elemen yang tidak ada/tersembunyi otomatis di-skip (tanpa error). Mendukung sidebar mobile (auto-open) & `prefers-reduced-motion`.
+- **Migration baru**: `2026_06_01_000000_add_tour_progress_to_users_table` (kolom JSON `tour_progress`, mengikuti pola `dashboard_cards`).
+
+### Changed
+- **Koreksi dokumentasi stack UI**: `CLAUDE.md` Bagian 1 & 9 diluruskan — UI aktual memakai **Bootstrap 5 (template "Dompet") + jQuery + metisMenu + Chart.js**, BUKAN TailwindCSS/Alpine.js (terverifikasi: 0 kemunculan Tailwind/Alpine di `resources/views`).
 
 ---
 

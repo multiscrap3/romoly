@@ -17,16 +17,16 @@
 
         {{-- Level + Momentum --}}
         <div class="row g-3 mb-4">
-            <div class="col-md-6">
+            <div class="col-md-6" data-tour="game-level">
                 @include('gamification._level_card')
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6" data-tour="game-momentum">
                 @include('gamification._momentum_card')
             </div>
         </div>
 
         {{-- Active Challenges --}}
-        <div class="card mb-4">
+        <div class="card mb-4" data-tour="game-challenge">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="card-title mb-0">Tantangan Aktif</h4>
                 @if($activeChallenges->isNotEmpty())

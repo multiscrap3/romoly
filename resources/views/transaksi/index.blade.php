@@ -39,10 +39,11 @@
     {{-- Toolbar --}}
     <div class="col-12">
         <div class="d-flex flex-wrap align-items-center gap-2">
-            <a href="{{ route('transaksi.create') }}" class="btn btn-primary btn-sm">
+            <a href="{{ route('transaksi.create') }}" class="btn btn-primary btn-sm" data-tour="transaksi-add">
                 <i class="bi bi-plus-lg me-1"></i> {{ __('transaksi.add') }}
             </a>
             <button class="btn btn-outline-secondary btn-sm" type="button"
+                    data-tour="transaksi-filter"
                     data-bs-toggle="collapse" data-bs-target="#filterPanel">
                 <i class="bi bi-funnel me-1"></i> {{ __('transaksi.filter') }}
                 @if(request()->hasAny(['jenis', 'kategori_id', 'tanggal_dari', 'tanggal_sampai', 'search']))
@@ -115,7 +116,7 @@
     @endif
 
     {{-- Transaksi list --}}
-    <div class="col-12">
+    <div class="col-12" data-tour="transaksi-list">
         <div class="card border-0 shadow-sm" style="border-radius:.75rem;">
             <div class="card-body p-0">
                 @forelse($transaksi as $t)

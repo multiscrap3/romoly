@@ -7,7 +7,7 @@
 <div class="row g-4">
 
     {{-- Quick links --}}
-    <div class="col-12">
+    <div class="col-12" data-tour="laporan-jenis">
         <div class="row g-3">
             @foreach([
                 ['route' => 'laporan.harian',   'label' => __('laporan.daily'),   'icon' => 'bi-calendar-day',   'color' => '#3b82f6'],
@@ -41,7 +41,7 @@
                     <a href="{{ route('laporan.bulanan') }}" class="small text-primary text-decoration-none">{{ __('laporan.detail') }}</a>
                 </div>
                 <p class="text-muted small mb-3">{{ __('laporan.no_data') }}</p>
-                <button type="button" class="btn btn-outline-secondary btn-sm disabled" tabindex="-1" title="{{ __('laporan.export') }}">
+                <button type="button" class="btn btn-outline-secondary btn-sm disabled" tabindex="-1" title="{{ __('laporan.export') }}" data-tour="laporan-export">
                     <i class="bi bi-download me-1"></i>{{ __('laporan.export_excel') }}
                 </button>
             </div>

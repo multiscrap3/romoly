@@ -9,10 +9,10 @@
     <div class="col-12 d-flex align-items-center justify-content-between">
         <p class="text-muted small mb-0">Total {{ $imports->total() }} import</p>
         <div class="d-flex gap-2">
-            <a href="{{ route('import-bank.web.template') }}" class="btn btn-outline-secondary btn-sm" download>
+            <a href="{{ route('import-bank.web.template') }}" class="btn btn-outline-secondary btn-sm" download data-tour="import-template">
                 <i class="bi bi-download me-1"></i>Template CSV
             </a>
-            <a href="{{ route('import-bank.web.form') }}" class="btn btn-primary btn-sm">
+            <a href="{{ route('import-bank.web.form') }}" class="btn btn-primary btn-sm" data-tour="import-start">
                 <i class="bi bi-upload me-1"></i>Import Baru
             </a>
         </div>
@@ -42,7 +42,7 @@
         </div>
     </div>
 
-    <div class="col-12">
+    <div class="col-12" data-tour="import-history">
         <div class="card border-0 shadow-sm" style="border-radius:.75rem;">
             <div class="card-body p-0">
                 @forelse($imports as $import)

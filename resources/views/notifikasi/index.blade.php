@@ -11,14 +11,14 @@
     <div class="d-flex align-items-center justify-content-between mb-2">
         <span class="small text-muted">{{ $notifikasi->total() }} notifikasi</span>
         @if($notifikasi->isNotEmpty())
-            <form method="POST" action="{{ route('notifikasi.mark-all-read') }}">
+            <form method="POST" action="{{ route('notifikasi.mark-all-read') }}" data-tour="notif-read-all">
                 @csrf
                 <button type="submit" class="btn btn-link btn-sm p-0 text-primary">{{ __('notifikasi.mark_all_read') }}</button>
             </form>
         @endif
     </div>
 
-    <div class="card border-0 shadow-sm" style="border-radius:.75rem;">
+    <div class="card border-0 shadow-sm" style="border-radius:.75rem;" data-tour="notif-list">
         <div class="card-body p-0">
             @forelse($notifikasi as $notif)
                 @php

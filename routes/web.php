@@ -13,6 +13,7 @@ use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\PrivacyController;
 use App\Http\Controllers\SuperadminAiMonitorController;
 use App\Http\Controllers\SuperadminController;
+use App\Http\Controllers\TourController;
 use App\Http\Controllers\TransaksiController;
 use Illuminate\Support\Facades\Route;
 
@@ -177,6 +178,9 @@ Route::prefix('cron')->name('cron.')->middleware('cron.secret')->group(function 
     Route::post('/anomaly-scan', [CronController::class, 'anomalyScan'])->name('anomaly-scan');
     Route::post('/purge-import-files', [CronController::class, 'purgeImportFiles'])->name('purge-import-files');
     Route::post('/purge-audit-log', [CronController::class, 'purgeAuditLog'])->name('purge-audit-log');
+    Route::post('/gamifikasi/daily-decay', [CronController::class, 'gamifikasiDailyDecay'])->name('gamifikasi.daily-decay');
+    Route::post('/gamifikasi/generate-challenges', [CronController::class, 'gamifikasiGenerateChallenges'])->name('gamifikasi.generate-challenges');
+    Route::post('/gamifikasi/weekly-reviews', [CronController::class, 'gamifikasiWeeklyReviews'])->name('gamifikasi.weekly-reviews');
     Route::get('/health', [CronController::class, 'health'])->name('health');
 });
 
@@ -197,6 +201,13 @@ Route::middleware(['auth'])->prefix('api')->name('api.')->group(function () {
     Route::get('/kategori/search', [\App\Http\Controllers\KategoriController::class, 'search'])->name('kategori.search');
     Route::get('/sumber-transaksi/saldo', [\App\Http\Controllers\SumberTransaksiController::class, 'getSaldo'])->name('sumber.saldo');
     Route::get('/transaksi/suggest', [\App\Http\Controllers\TransaksiController::class, 'suggest'])->name('transaksi.suggest');
+
+    // Guided tour / user guide progress
+    Route::prefix('tour')->name('tour.')->group(function () {
+        Route::post('/seen', [TourController::class, 'seen'])->name('seen');
+        Route::post('/welcome', [TourController::class, 'welcome'])->name('welcome');
+        Route::delete('/reset', [TourController::class, 'reset'])->name('reset');
+    });
 
     Route::prefix('ocr')->name('ocr.')->group(function () {
         Route::post('/extract', [OCRController::class, 'extract'])->name('extract');

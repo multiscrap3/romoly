@@ -8,7 +8,7 @@
 
     <div class="col-12 d-flex align-items-center justify-content-between flex-wrap gap-3">
         {{-- Bootstrap Nav Tabs --}}
-        <ul class="nav nav-pills" id="hpTab" role="tablist">
+        <ul class="nav nav-pills" id="hpTab" role="tablist" data-tour="hp-ringkasan">
             <li class="nav-item" role="presentation">
                 <button class="nav-link {{ request('tab', 'hutang') === 'hutang' ? 'active' : '' }}"
                         id="hutang-tab" data-bs-toggle="pill" data-bs-target="#hutangPanel" type="button" role="tab">
@@ -30,7 +30,7 @@
                 </button>
             </li>
         </ul>
-        <a href="{{ route('hutang-piutang.create') }}" class="btn btn-primary btn-sm">
+        <a href="{{ route('hutang-piutang.create') }}" class="btn btn-primary btn-sm" data-tour="hp-add">
             <i class="bi bi-plus-lg me-1"></i>{{ __('hutang.add') }}
         </a>
     </div>

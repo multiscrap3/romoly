@@ -7,7 +7,7 @@
 <div class="row g-4">
 
     <div class="col-12 d-flex justify-content-end">
-        <a href="{{ route('anggaran.create') }}" class="btn btn-primary btn-sm">
+        <a href="{{ route('anggaran.create') }}" class="btn btn-primary btn-sm" data-tour="anggaran-add">
             <i class="bi bi-plus-lg me-1"></i>{{ __('anggaran.add') }}
         </a>
     </div>
@@ -38,7 +38,7 @@
                             </form>
                         </div>
                     </div>
-                    <div class="progress" style="height:8px;">
+                    <div class="progress" style="height:8px;" data-tour="anggaran-progress">
                         <div class="progress-bar {{ $barClass }}" role="progressbar"
                              style="width:{{ $persen }}%;" aria-valuenow="{{ $persen }}" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>

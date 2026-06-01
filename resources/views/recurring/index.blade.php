@@ -7,7 +7,7 @@
 <div class="row g-4">
 
     <div class="col-12 d-flex justify-content-end">
-        <a href="{{ route('recurring.create') }}" class="btn btn-primary btn-sm">
+        <a href="{{ route('recurring.create') }}" class="btn btn-primary btn-sm" data-tour="recurring-add">
             <i class="bi bi-plus-lg me-1"></i>{{ __('recurring.add') }}
         </a>
     </div>
@@ -41,7 +41,7 @@
                             <div class="d-flex align-items-center gap-2 mt-1 justify-content-end" style="font-size:.72rem;">
                                 <span class="badge rounded-pill {{ $item->is_active ? 'bg-success' : 'bg-secondary' }}"
                                       style="font-size:.6rem;">{{ $item->is_active ? __('recurring.active') : __('recurring.inactive') }}</span>
-                                <form method="POST" action="{{ route('recurring.toggle', $item) }}" class="d-inline">
+                                <form method="POST" action="{{ route('recurring.toggle', $item) }}" class="d-inline" data-tour="recurring-toggle">
                                     @csrf
                                     <button type="submit" class="btn btn-link btn-sm p-0 text-primary" style="font-size:.72rem;">
                                         {{ $item->is_active ? __('recurring.inactive') : __('recurring.active') }}

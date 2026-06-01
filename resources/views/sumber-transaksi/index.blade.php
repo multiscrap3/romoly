@@ -53,7 +53,7 @@
 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
     <div>
         <div class="text-muted small mb-1">{{ __('sumber.total_aset') }}</div>
-        <div class="fw-bold fs-4 text-primary">Rp {{ number_format($totalSaldo, 0, ',', '.') }}</div>
+        <div class="fw-bold fs-4 text-primary" data-tour="sumber-saldo">Rp {{ number_format($totalSaldo, 0, ',', '.') }}</div>
         <div class="d-flex gap-2 mt-1">
             <span class="badge rounded-pill small fw-normal" style="background:#dcfce7;color:#16a34a;">
                 <i class="bi bi-circle-fill me-1" style="font-size:.45rem;vertical-align:middle;"></i>
@@ -68,6 +68,7 @@
         </div>
     </div>
     <button class="btn btn-primary d-flex align-items-center gap-2"
+            data-tour="sumber-add"
             data-bs-toggle="modal" data-bs-target="#modalTambah">
         <i class="bi bi-plus-lg"></i>
         <span>{{ __('sumber.add') }}</span>
