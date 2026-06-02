@@ -58,14 +58,26 @@
                                 <td class="text-muted">{{ $user->created_at->translatedFormat('d M Y') }}</td>
                                 <td>
                                     @if(!$user->hasRole('superadmin'))
-                                        <form method="POST" action="{{ route('superadmin.users.toggle-status', $user) }}" class="d-inline">
-                                            @csrf @method('PUT')
-                                            <button type="submit"
-                                                    class="btn btn-link btn-sm p-0 {{ $user->is_active ? 'text-danger' : 'text-success' }}"
-                                                    style="font-size:.78rem;">
-                                                {{ $user->is_active ? __('superadmin.ban') : __('superadmin.unban') }}
-                                            </button>
-                                        </form>
+                                        <div class="d-inline-flex align-items-center gap-2">
+                                            <form method="POST" action="{{ route('superadmin.users.toggle-status', $user) }}" class="d-inline">
+                                                @csrf @method('PUT')
+                                                <button type="submit"
+                                                        class="btn btn-link btn-sm p-0 {{ $user->is_active ? 'text-danger' : 'text-success' }}"
+                                                        style="font-size:.78rem;">
+                                                    {{ $user->is_active ? __('superadmin.ban') : __('superadmin.unban') }}
+                                                </button>
+                                            </form>
+                                            <span class="text-muted" style="font-size:.7rem;">|</span>
+                                            <form method="POST" action="{{ route('superadmin.users.destroy', $user) }}" class="d-inline js-delete-user"
+                                                  data-confirm="{{ __('superadmin.delete_confirm', ['name' => $user->name]) }}">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="btn btn-link btn-sm p-0 text-danger" style="font-size:.78rem;">
+                                                    {{ __('superadmin.delete') }}
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @else
+                                        <span class="text-muted" style="font-size:.72rem;">—</span>
                                     @endif
                                 </td>
                             </tr>
@@ -83,3 +95,18 @@
 
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    // Konfirmasi hapus user. Pesan diambil dari data-confirm (string murni),
+    // bukan di-inline ke JS, agar nama user yang dikontrol pengguna tidak
+    // bisa menjadi vektor XSS.
+    document.querySelectorAll('.js-delete-user').forEach(function (form) {
+        form.addEventListener('submit', function (e) {
+            if (!window.confirm(form.dataset.confirm)) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+@endpush

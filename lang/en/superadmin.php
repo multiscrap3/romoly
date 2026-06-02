@@ -22,6 +22,8 @@ return [
     'view'          => 'View',
     'ban'           => 'Ban',
     'unban'         => 'Unban',
+    'delete'        => 'Delete',
+    'delete_confirm' => 'Delete account :name? This is a soft delete; data is kept and the email can be re-registered.',
 
     'log_action'    => 'Action',
     'log_user'      => 'User',

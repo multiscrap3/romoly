@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\AuditLog;
 use App\Models\Household;
+use App\Models\SecurityLog;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -88,6 +90,59 @@ class SuperadminController extends Controller
         $status = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
 
         return back()->with('success', "Akun {$user->name} berhasil {$status}.");
+    }
+
+    /**
+     * Hapus (soft delete) akun pengguna.
+     *
+     * Aturan keamanan:
+     *  - Hanya superadmin (dijaga middleware superadmin.global) yang bisa mengakses.
+     *  - User ber-role `superadmin` TIDAK bisa dihapus.
+     *  - Superadmin tidak bisa menghapus akunnya sendiri.
+     *
+     * Penghapusan bersifat soft delete: data transaksi, audit, dan gamifikasi
+     * tetap utuh. Email pengguna "dilepas" (di-rename) agar alamat yang sama
+     * dapat digunakan untuk mendaftar ulang.
+     */
+    public function destroyUser(Request $request, User $user): RedirectResponse
+    {
+        if ($user->hasRole('superadmin')) {
+            return back()->with('error', 'Akun superadmin tidak dapat dihapus.');
+        }
+
+        if ($user->id === Auth::id()) {
+            return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        }
+
+        $originalEmail = $user->email;
+        $originalName  = $user->name;
+
+        DB::transaction(function () use ($user) {
+            // Lepas (pseudonymisasi) email agar alamat yang sama bisa dipakai
+            // mendaftar ulang. `id` menjamin tombstone unik; domain `.invalid`
+            // adalah TLD yang dijamin RFC 2606 tak pernah menjadi email nyata,
+            // sehingga tidak akan bentrok dengan registrasi mana pun.
+            // Alamat asli tetap tercatat di SecurityLog untuk keperluan audit.
+            $user->forceFill([
+                'email'     => 'deleted_' . $user->id . '_' . now()->timestamp . '@deleted.invalid',
+                'is_active' => false,
+            ])->save();
+
+            $user->delete(); // soft delete (deleted_at)
+        });
+
+        SecurityLog::record(
+            eventType: 'superadmin.user_deleted',
+            severity: 'high',
+            context: [
+                'deleted_user_id' => $user->id,
+                'deleted_email'   => $originalEmail,
+                'deleted_name'    => $originalName,
+                'household_id'    => $user->household_id,
+            ],
+        );
+
+        return back()->with('success', "Akun {$originalName} berhasil dihapus. Email {$originalEmail} kini bebas didaftarkan ulang.");
     }
 
     public function logs(Request $request): View

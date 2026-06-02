@@ -19,6 +19,25 @@ dan project ini menggunakan [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.6.0] — 2026-06-03
+
+### Added
+- **Hapus akun pengguna dari Superadmin** (`/superadmin/users`). Superadmin kini dapat menghapus akun langsung dari daftar pengguna, dengan tombol "Hapus" berkonfirmasi di samping aksi Blokir/Aktifkan.
+  - **Soft delete**: pengguna ditandai `deleted_at` (kolom sudah ada sejak migration awal) — data transaksi, audit, dan gamifikasi tetap utuh; pengguna otomatis hilang dari listing dan tidak bisa login.
+  - **Bisa daftar ulang dengan email yang sama**: saat dihapus, email di-pseudonymisasi menjadi tombstone unik (`deleted_{id}_{ts}@deleted.invalid`, TLD `.invalid` per RFC 2606) sehingga alamat asli bebas dipakai registrasi baru tanpa mengubah alur `RegisterController`. Alamat asli tetap tercatat di `SecurityLog` untuk audit.
+- **Endpoint**: `DELETE /superadmin/users/{user}` → `SuperadminController@destroyUser` (route `superadmin.users.destroy`).
+
+### Security
+- **Guard penghapusan**: akun ber-role `superadmin` tidak dapat dihapus; superadmin tidak dapat menghapus akunnya sendiri; route dijaga middleware `auth` + `superadmin.global`; binding model menolak pengguna yang sudah terhapus (anti double-delete).
+- **Audit**: setiap penghapusan dicatat ke `SecurityLog` dengan `event_type = superadmin.user_deleted`, severity `high`.
+- **Pencegahan XSS**: pesan konfirmasi hapus dibaca via `data-confirm` (string murni di handler JS) alih-alih di-inline ke atribut `onsubmit`, mencegah nama pengguna menjadi vektor stored XSS.
+
+### Changed
+- **Model `User`** kini memakai trait `SoftDeletes`.
+- **VERSION** disinkronkan ke versi aplikasi aktual (sebelumnya tertinggal di `1.4.0`).
+
+---
+
 ## [1.5.0] — 2026-06-01
 
 ### Added

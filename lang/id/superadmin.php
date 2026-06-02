@@ -22,6 +22,8 @@ return [
     'view'          => 'Lihat',
     'ban'           => 'Blokir',
     'unban'         => 'Aktifkan',
+    'delete'        => 'Hapus',
+    'delete_confirm' => 'Hapus akun :name? Tindakan ini bersifat soft delete; data tetap tersimpan dan email bebas didaftarkan ulang.',
 
     'log_action'    => 'Aksi',
     'log_user'      => 'Pengguna',

@@ -191,6 +191,7 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'superadmi
     Route::get('/households/{household}', [SuperadminController::class, 'householdShow'])->name('household-show');
     Route::get('/users', [SuperadminController::class, 'users'])->name('users');
     Route::put('/users/{user}/status', [SuperadminController::class, 'toggleUserStatus'])->name('users.toggle-status');
+    Route::delete('/users/{user}', [SuperadminController::class, 'destroyUser'])->name('users.destroy');
     Route::get('/logs', [SuperadminController::class, 'logs'])->name('logs');
     Route::get('/health', [SuperadminController::class, 'health'])->name('health');
     Route::get('/ai-monitor', [SuperadminAiMonitorController::class, 'index'])->name('ai-monitor');
