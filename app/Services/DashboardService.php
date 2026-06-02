@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Tag;
 use App\Models\Transaksi;
 use App\Models\SumberTransaksi;
 use App\Models\Anggaran;
@@ -226,5 +227,31 @@ class DashboardService
             'labels' => $sumber->pluck('nama')->toArray(),
             'values' => $sumber->pluck('saldo_saat_ini')->toArray(),
         ];
+    }
+
+    /**
+     * Top N tag berdasarkan pengeluaran bulan ini.
+     */
+    public function getTopTags(int $limit = 5): array
+    {
+        $householdId = $this->householdId();
+        $bulanIni    = Carbon::now();
+
+        $tags = Tag::where('household_id', $householdId)->get();
+
+        return $tags->map(function (Tag $tag) use ($bulanIni) {
+            $pengeluaran = Transaksi::whereHas('tags', fn ($q) => $q->where('tags.id', $tag->id))
+                ->where('jenis', 'pengeluaran')
+                ->whereYear('tanggal', $bulanIni->year)
+                ->whereMonth('tanggal', $bulanIni->month)
+                ->sum('jumlah');
+
+            return ['tag' => $tag, 'pengeluaran' => (float) $pengeluaran];
+        })
+        ->filter(fn ($item) => $item['pengeluaran'] > 0)
+        ->sortByDesc('pengeluaran')
+        ->take($limit)
+        ->values()
+        ->toArray();
     }
 }

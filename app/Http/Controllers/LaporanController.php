@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tag;
 use App\Services\LaporanService;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -82,6 +83,19 @@ class LaporanController extends Controller
         $data = $this->laporanService->perbandinganBulan($bulan1, $tahun1, $bulan2, $tahun2);
 
         return view('laporan.perbandingan', compact('data', 'bulan1', 'tahun1', 'bulan2', 'tahun2'));
+    }
+
+    /**
+     * Laporan per tag
+     */
+    public function byTag(Request $request, Tag $tag)
+    {
+        $dari   = $request->dari   ?? Carbon::now()->startOfMonth()->format('Y-m-d');
+        $sampai = $request->sampai ?? Carbon::now()->endOfMonth()->format('Y-m-d');
+
+        $data = $this->laporanService->getByTag($tag, $dari, $sampai);
+
+        return view('laporan.tag', compact('data', 'tag', 'dari', 'sampai'));
     }
 
     /**

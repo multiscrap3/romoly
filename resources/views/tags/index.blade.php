@@ -29,6 +29,56 @@
         </div>
     </div>
 
+    {{-- Summary per tag --}}
+    @if(count($summaryByTag) > 0)
+    <div class="card border-0 shadow-sm" style="border-radius:.75rem;">
+        <div class="card-header bg-white border-bottom py-3 px-4" style="border-radius:.75rem .75rem 0 0;">
+            <h6 class="fw-semibold mb-0">Ringkasan Penggunaan Tag</h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-sm table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="px-4 py-2" style="font-size:.78rem;">Tag</th>
+                            <th class="text-end py-2" style="font-size:.78rem;">Transaksi</th>
+                            <th class="text-end py-2" style="font-size:.78rem;">Pengeluaran</th>
+                            <th class="text-end py-2" style="font-size:.78rem;">Pemasukan</th>
+                            <th class="text-end px-4 py-2" style="font-size:.78rem;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($summaryByTag as $item)
+                        <tr>
+                            <td class="px-4 py-2">
+                                <span class="rounded-circle d-inline-block me-2"
+                                      style="width:10px;height:10px;background:{{ $item['tag']->warna }};"></span>
+                                <span class="small fw-medium">{{ $item['tag']->nama }}</span>
+                            </td>
+                            <td class="text-end py-2">
+                                <span class="text-muted" style="font-size:.78rem;">{{ $item['jumlah_transaksi'] }}</span>
+                            </td>
+                            <td class="text-end py-2">
+                                <span class="small text-danger fw-medium">Rp {{ number_format($item['total_pengeluaran'], 0, ',', '.') }}</span>
+                            </td>
+                            <td class="text-end py-2">
+                                <span class="small text-success fw-medium">Rp {{ number_format($item['total_pemasukan'], 0, ',', '.') }}</span>
+                            </td>
+                            <td class="text-end px-4 py-2">
+                                <a href="{{ route('laporan.tag', $item['tag']) }}"
+                                   class="small text-primary text-decoration-none" style="font-size:.75rem;">
+                                    Lihat Laporan →
+                                </a>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    @endif
+
     {{-- Daftar tags --}}
     <div class="card border-0 shadow-sm" style="border-radius:.75rem;">
         <div class="card-header bg-white border-bottom py-3 px-4" style="border-radius:.75rem .75rem 0 0;">

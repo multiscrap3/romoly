@@ -19,6 +19,23 @@ dan project ini menggunakan [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.7.0] — 2026-06-03
+
+### Added
+- **Tag Enhancement (Phase 1 + 2)** — pengembangan sistem tag transaksi (dikembangkan 2026-06-02).
+  - **Filter tag di halaman Transaksi**: filter multi-tag (checkbox berwarna) yang ikut dipertahankan pada query string bersama filter lain.
+  - **Summary per tag di halaman Tags**: tabel ringkasan per tag (jumlah transaksi, total pengeluaran, total pemasukan) via `TransaksiService::getSummaryByTag()`.
+  - **Laporan per tag**: halaman `laporan/tag` (chart tren 6 bulan + breakdown per kategori) via `LaporanController@byTag` + `LaporanService::getByTag()`, route `GET /laporan/tag/{tag}` (`laporan.tag`).
+  - **Widget "Tag Bulan Ini" di dashboard**: Top N tag berdasarkan pengeluaran bulan berjalan via `DashboardService::getTopTags()` (widget dashboard baru, dapat di-toggle).
+  - **Slug tag otomatis**: `slug` di-generate dari nama (`Str::slug`) saat membuat/memperbarui tag.
+- **Tests**: `TransaksiServiceTagTest`, `LaporanServiceTagTest` (Unit/Services).
+- **Dokumentasi**: `tag-context.md` (roadmap & design decision Tag System Phase 1-3); referensi ditambahkan di `CLAUDE.md` & `context-index.md`.
+
+### Catatan
+- Phase 3 (tipe/rich tag) belum diimplementasikan — lihat `tag-context.md`.
+
+---
+
 ## [1.6.0] — 2026-06-03
 
 ### Added

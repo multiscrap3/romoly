@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\OcrHistory;
+use App\Models\Tag;
 use App\Models\Transaksi;
 use App\Models\SumberTransaksi;
 use App\Models\Anggaran;
@@ -298,5 +299,37 @@ class TransaksiService
             'saldo' => $saldo,
             'total_transaksi' => $query->count(),
         ];
+    }
+
+    /**
+     * Ringkasan pemasukan/pengeluaran per tag untuk household saat ini.
+     * Hanya tag yang punya ≥1 transaksi dikembalikan, diurutkan pengeluaran terbesar dulu.
+     */
+    public function getSummaryByTag(): array
+    {
+        $householdId = auth()->user()->household_id;
+
+        $tags = Tag::where('household_id', $householdId)->get();
+
+        return $tags->map(function (Tag $tag) {
+            $aggregate = Transaksi::selectRaw("
+                    SUM(CASE WHEN jenis = 'pemasukan'   THEN jumlah ELSE 0 END) as total_pemasukan,
+                    SUM(CASE WHEN jenis = 'pengeluaran' THEN jumlah ELSE 0 END) as total_pengeluaran,
+                    COUNT(*) as jumlah_transaksi
+                ")
+                ->whereHas('tags', fn ($q) => $q->where('tags.id', $tag->id))
+                ->first();
+
+            return [
+                'tag'               => $tag,
+                'total_pemasukan'   => (float) ($aggregate->total_pemasukan   ?? 0),
+                'total_pengeluaran' => (float) ($aggregate->total_pengeluaran ?? 0),
+                'jumlah_transaksi'  => (int)   ($aggregate->jumlah_transaksi  ?? 0),
+            ];
+        })
+        ->filter(fn ($item) => $item['jumlah_transaksi'] > 0)
+        ->sortByDesc('total_pengeluaran')
+        ->values()
+        ->toArray();
     }
 }

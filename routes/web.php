@@ -88,6 +88,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/tahunan', [LaporanController::class, 'tahunan'])->name('tahunan');
         Route::get('/perbandingan', [LaporanController::class, 'perbandingan'])->name('perbandingan');
         Route::post('/export', [LaporanController::class, 'export'])->name('export');
+        Route::get('/tag/{tag}', [LaporanController::class, 'byTag'])->name('tag');
     });
     
     // Kategori

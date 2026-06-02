@@ -296,6 +296,7 @@ php artisan config:clear && php artisan cache:clear
 
 ### 🔄 Ada Strukturnya, Belum Di-enforce
 - **Freemium/PlanLimit** — `PlanLimitService` ada tapi `internalBypass = true`, middleware belum dipasang ke routes, kolom quota baru di tabel `plans` belum dimigrasikan. Detail: lihat `freemium-context.md`
+- **Tag Enhancement (Phase 1+2)** — UI filter tag di transaksi, summary per tag, laporan per tag (chart + breakdown kategori), widget Top Tags di dashboard. Phase 3 (tipe tag) belum. Detail: lihat [[tag-context]]
 
 ### ❌ Tidak Diimplementasikan
 - Payment gateway (Midtrans)
@@ -338,6 +339,7 @@ Lihat [[CONTEXT]] untuk detail lengkap. Ringkasan:
 | [[UIUXgame-context]] | Design decisions UIUX gamifikasi Phase 5 | ✅ Akurat |
 | [[UIUXgame]] | Visual guidelines gamifikasi | ✅ Akurat |
 | [[freemium-context]] | Roadmap freemium + payment (belum diimplementasikan) | ✅ Akurat sebagai roadmap |
+| [[tag-context]] | Roadmap Tag System: UI filter, laporan/summary per tag, rich tag (Phase 1-3) | ✅ Akurat sebagai roadmap |
 | [[userguide]] | Guided tour / user guide interaktif (Driver.js) — DB per-user, ID+EN | ✅ Implemented (v1.5.0) |
 | [[PROMPT]] | Master prompt awal — **OUTDATED**, banyak nama salah | ⚠️ Jangan dijadikan referensi teknis |
 | `docs/superpowers/plans/` | Implementation plans per feature | Arsip — lihat [[context-index]] |

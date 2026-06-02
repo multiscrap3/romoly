@@ -46,11 +46,11 @@
                     data-tour="transaksi-filter"
                     data-bs-toggle="collapse" data-bs-target="#filterPanel">
                 <i class="bi bi-funnel me-1"></i> {{ __('transaksi.filter') }}
-                @if(request()->hasAny(['jenis', 'kategori_id', 'tanggal_dari', 'tanggal_sampai', 'search']))
+                @if(request()->hasAny(['jenis', 'kategori_id', 'tanggal_dari', 'tanggal_sampai', 'search']) || request('tags'))
                     <span class="badge bg-primary ms-1">{{ __('transaksi.filter_active') }}</span>
                 @endif
             </button>
-            @if(request()->hasAny(['jenis', 'kategori_id', 'tanggal_dari', 'tanggal_sampai', 'search']))
+            @if(request()->hasAny(['jenis', 'kategori_id', 'tanggal_dari', 'tanggal_sampai', 'search']) || request('tags'))
                 <a href="{{ route('transaksi.index') }}" class="btn btn-link btn-sm text-danger p-0">
                     <i class="bi bi-x-circle me-1"></i>{{ __('transaksi.reset_filter') }}
                 </a>
@@ -58,7 +58,7 @@
         </div>
 
         {{-- Filter panel collapse --}}
-        <div class="collapse {{ request()->hasAny(['jenis','kategori_id','tanggal_dari','tanggal_sampai','search']) ? 'show' : '' }} mt-3"
+        <div class="collapse {{ request()->hasAny(['jenis','kategori_id','tanggal_dari','tanggal_sampai','search']) || request('tags') ? 'show' : '' }} mt-3"
              id="filterPanel">
             <div class="card border-0 shadow-sm" style="border-radius:.75rem;">
                 <div class="card-body p-4">
@@ -96,6 +96,28 @@
                             <input type="date" name="tanggal_sampai" value="{{ request('tanggal_sampai') }}"
                                    class="form-control form-control-sm">
                         </div>
+                        @if($tags->count())
+                        <div class="col-12">
+                            <label class="form-label small fw-medium">Tag</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach($tags as $tag)
+                                    <div class="form-check form-check-inline m-0">
+                                        <input class="form-check-input" type="checkbox"
+                                               name="tags[]"
+                                               value="{{ $tag->id }}"
+                                               id="filter-tag-{{ $tag->id }}"
+                                               {{ in_array($tag->id, (array) request('tags', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="filter-tag-{{ $tag->id }}"
+                                               style="font-size:.78rem;">
+                                            <span class="rounded-circle d-inline-block me-1"
+                                                  style="width:8px;height:8px;background:{{ $tag->warna }};"></span>
+                                            {{ $tag->nama }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
                         <div class="col-12 col-lg-1 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary btn-sm w-100">{{ __('transaksi.apply') }}</button>
                         </div>

@@ -32,6 +32,7 @@ class DashboardController extends Controller
         'transaksi_terbaru' => ['label' => 'Transaksi Terbaru',   'icon' => 'bi-clock-history',     'desc' => 'Daftar transaksi paling baru',                         'default_width' => 'medium', 'default_height' => 'auto'],
         'quick_actions'          => ['label' => 'Aksi Cepat',          'icon' => 'bi-lightning-charge',  'desc' => 'Pintasan ke fitur yang sering digunakan',              'default_width' => 'full',   'default_height' => 'auto'],
         'gamification_insight'   => ['label' => 'Progres Finansial',   'icon' => 'bi-trophy',            'desc' => 'Level, momentum, insight tantangan & achievement',      'default_width' => 'medium', 'default_height' => 'auto'],
+        'top_tags'               => ['label' => 'Tag Bulan Ini',       'icon' => 'bi-tags',              'desc' => 'Tag dengan pengeluaran terbesar bulan ini',             'default_width' => 'small',  'default_height' => 'auto'],
     ];
 
     public const DEFAULT_LAYOUT = [
@@ -46,6 +47,7 @@ class DashboardController extends Controller
         ['id' => 'card_tabungan',        'visible' => true, 'width' => 'small',  'height' => 'auto'],
         ['id' => 'card_hutang',          'visible' => true, 'width' => 'small',  'height' => 'auto'],
         ['id' => 'card_transaksi',       'visible' => true, 'width' => 'small',  'height' => 'auto'],
+        ['id' => 'top_tags',             'visible' => true, 'width' => 'small',  'height' => 'auto'],
     ];
 
     protected $dashboardService;
@@ -111,6 +113,7 @@ class DashboardController extends Controller
         $summary                = $this->dashboardService->getSummary();
         $pengeluaranPerKategori = $this->dashboardService->getPengeluaranPerKategori();
         $saldoPerSumber         = $this->dashboardService->getSaldoPerSumber();
+        $topTags                = $this->dashboardService->getTopTags(5);
         $gamificationSummary    = $this->gamificationDashboardService->getSummary($user);
         $gamificationInsights   = $this->gamificationDashboardService->getInsights($user);
         $widgetDefs             = self::WIDGETS;
@@ -121,6 +124,7 @@ class DashboardController extends Controller
             'summary',
             'pengeluaranPerKategori',
             'saldoPerSumber',
+            'topTags',
             'gamificationSummary',
             'gamificationInsights',
             'widgetLayout',

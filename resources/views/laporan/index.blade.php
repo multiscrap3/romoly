@@ -29,6 +29,20 @@
                     </a>
                 </div>
             @endforeach
+            {{-- Card laporan per tag --}}
+            <div class="col-6 col-md-3">
+                <a href="{{ route('tags.index') }}"
+                   class="card border-0 shadow-sm text-decoration-none h-100"
+                   style="border-radius:.75rem;transition:.15s;">
+                    <div class="card-body p-4 d-flex flex-column align-items-center gap-3 text-center">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle"
+                             style="width:52px;height:52px;background:#f59e0b20;">
+                            <i class="bi bi-tags fs-4" style="color:#f59e0b;"></i>
+                        </div>
+                        <span class="fw-semibold small text-dark">Per Tag</span>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
 

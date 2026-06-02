@@ -3,20 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tag;
+use App\Services\TransaksiService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class TagController extends Controller
 {
-    /**
-     * Display a listing of tags
-     */
+    public function __construct(private readonly TransaksiService $transaksiService) {}
+
     public function index()
     {
-        $tags = Tag::withCount('transaksi')
-            ->orderBy('nama')
-            ->get();
+        $tags         = Tag::withCount('transaksi')->orderBy('nama')->get();
+        $summaryByTag = $this->transaksiService->getSummaryByTag();
 
-        return view('tags.index', compact('tags'));
+        return view('tags.index', compact('tags', 'summaryByTag'));
     }
 
     /**
@@ -32,8 +32,9 @@ class TagController extends Controller
         try {
             Tag::create([
                 'household_id' => auth()->user()->household_id,
-                'nama' => $request->nama,
-                'warna' => $request->warna ?? '#6c757d',
+                'nama'         => $request->nama,
+                'slug'         => Str::slug($request->nama),
+                'warna'        => $request->warna ?? '#6c757d',
             ]);
 
             return back()->with('success', 'Tag berhasil ditambahkan');
@@ -55,7 +56,11 @@ class TagController extends Controller
         ]);
 
         try {
-            $tag->update($request->only(['nama', 'warna']));
+            $tag->update([
+                'nama'  => $request->nama,
+                'slug'  => Str::slug($request->nama),
+                'warna' => $request->warna ?? $tag->warna,
+            ]);
 
             return back()->with('success', 'Tag berhasil diperbarui');
         } catch (\Exception $e) {

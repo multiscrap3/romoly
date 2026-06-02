@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Tag;
 use App\Models\Transaksi;
 use App\Models\Kategori;
 use Illuminate\Support\Facades\DB;
@@ -282,6 +283,59 @@ class LaporanService
                 'selisih_pengeluaran' => $selisihPengeluaran,
                 'persentase_pemasukan' => round($persentasePemasukan, 2),
                 'persentase_pengeluaran' => round($persentasePengeluaran, 2),
+            ],
+        ];
+    }
+
+    /**
+     * Laporan semua transaksi bertag tertentu dalam rentang tanggal.
+     */
+    public function getByTag(Tag $tag, string $dari, string $sampai): array
+    {
+        $start = Carbon::parse($dari)->startOfDay();
+        $end   = Carbon::parse($sampai)->endOfDay();
+
+        $transaksi = Transaksi::with(['kategori', 'sumberTransaksi', 'user'])
+            ->whereHas('tags', fn ($q) => $q->where('tags.id', $tag->id))
+            ->whereBetween('tanggal', [$start, $end])
+            ->orderBy('tanggal', 'desc')
+            ->get();
+
+        $pemasukan   = $transaksi->where('jenis', 'pemasukan')->sum('jumlah');
+        $pengeluaran = $transaksi->where('jenis', 'pengeluaran')->sum('jumlah');
+
+        // Tren 6 bulan terakhir untuk chart
+        $perBulan = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $date   = Carbon::now()->subMonths($i);
+            $bulanT = $transaksi->filter(
+                fn ($t) => $t->tanggal->year == $date->year && $t->tanggal->month == $date->month
+            );
+            $perBulan[] = [
+                'bulan'       => $date->translatedFormat('M Y'),
+                'pemasukan'   => $bulanT->where('jenis', 'pemasukan')->sum('jumlah'),
+                'pengeluaran' => $bulanT->where('jenis', 'pengeluaran')->sum('jumlah'),
+            ];
+        }
+
+        $perKategori = $this->groupByKategori($transaksi->where('jenis', 'pengeluaran'));
+
+        return [
+            'tag'               => $tag,
+            'periode'           => $start->translatedFormat('d M Y') . ' s/d ' . $end->translatedFormat('d M Y'),
+            'dari'              => $dari,
+            'sampai'            => $sampai,
+            'transaksi'         => $transaksi,
+            'total_pemasukan'   => $pemasukan,
+            'total_pengeluaran' => $pengeluaran,
+            'cashflow'          => $pemasukan - $pengeluaran,
+            'per_bulan'         => $perBulan,
+            'per_kategori'      => $perKategori,
+            'summary' => [
+                'pemasukan'       => $pemasukan,
+                'pengeluaran'     => $pengeluaran,
+                'selisih'         => $pemasukan - $pengeluaran,
+                'total_transaksi' => $transaksi->count(),
             ],
         ];
     }

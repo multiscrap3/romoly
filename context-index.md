@@ -30,6 +30,7 @@ Update file ini setiap kali ada context file baru atau status berubah.
     ├── PDP_CHECKLIST.md        ← compliance  | high     | global
     ├── VERSIONING.md           ← ops         | low      | global
     ├── freemium-context.md     ← roadmap     | medium   | freemium (pending)
+    ├── tag-context.md          ← roadmap     | medium   | transaksi/tag (partial — Phase 0 done)
     ├── userguide.md            ← spec        | medium   | onboarding/ux ✅ implemented (v1.5.0)
     └── gamification/
         ├── gamifikasi.md          ← spec     | medium | gamification
@@ -72,6 +73,7 @@ Update file ini setiap kali ada context file baru atau status berubah.
 | [[PDP_CHECKLIST]] | compliance | active | global | high | — |
 | [[VERSIONING]] | ops | active | global | low | — |
 | [[freemium-context]] | roadmap | active | freemium | medium | partial — bypass aktif |
+| [[tag-context]] | decision | active | transaksi | medium | ✅ Phase 1+2 complete (2026-06-02), Phase 3 pending |
 | [[userguide]] | spec | implemented | onboarding/ux | medium | ✅ complete (v1.5.0) |
 | [[gamifikasi]] | spec | active | gamification | medium | — (filosofi) |
 | [[gamifikasi-context]] | decision | active | gamification | high | ✅ complete (Phase 1-5) |
@@ -89,6 +91,7 @@ UIUXgame.md ──────────────────────�
 UIUXgame.md ────────────────────► userguide.md
 onboarding (wizard) ────────────► userguide.md
 CLAUDE.md ──────────────────────► freemium-context.md
+CLAUDE.md ──────────────────────► tag-context.md
 CLAUDE.md ──────────────────────► userguide.md
 CLAUDE.md ──────────────────────► CHANGELOG, DEPLOYMENT_CHECKLIST, PDP_CHECKLIST, VERSIONING
 CLAUDE.md ◄── CONTEXT.md
@@ -112,6 +115,7 @@ context-index.md ◄── CLAUDE.md (bidirectional)
 | `gamification`, `xp`, `level`, `momentum` | [[gamifikasi]], [[gamifikasi-context]] |
 | `gamification`, `ui`, `ux`, `rarity` | [[UIUXgame]], [[UIUXgame-context]] |
 | `freemium`, `plan`, `subscription` | [[freemium-context]] |
+| `tag`, `label`, `filter`, `laporan-tag`, `summary-tag` | [[tag-context]] |
 | `user-guide`, `product-tour`, `walkthrough`, `tour`, `onboarding` | [[userguide]] |
 | `archive`, `outdated` | docs/archive/ |
 
