@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Anggaran;
 use App\Models\Household;
 use App\Models\Kategori;
-use App\Models\RecurringTransaksi;
 use App\Models\SumberTransaksi;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -69,6 +68,10 @@ class OnboardingController extends Controller
             'rekening.*.nama'         => ['required', 'string', 'max:255'],
             'rekening.*.jenis'        => ['required', 'in:cash,bank,e-wallet,kartu_kredit,investasi,lainnya'],
             'rekening.*.saldo_awal'   => ['nullable', 'numeric', 'min:0'],
+        ], [
+            'rekening.required'       => 'Tambahkan minimal satu sumber dana. Langkah ini wajib dan tidak bisa dilewati.',
+            'rekening.min'            => 'Tambahkan minimal satu sumber dana. Langkah ini wajib dan tidak bisa dilewati.',
+            'rekening.*.nama.required'=> 'Nama sumber dana wajib diisi.',
         ]);
 
         $householdId = $request->user()->household_id;
@@ -120,53 +123,6 @@ class OnboardingController extends Controller
             });
         }
 
-        session(['onboarding_step' => 4]);
-
-        return redirect()->route('onboarding.index')
-            ->with('success', 'Anggaran berhasil disimpan.');
-    }
-
-    public function storeRecurring(Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'recurring'                    => ['nullable', 'array'],
-            'recurring.*.nama'             => ['required', 'string', 'max:255'],
-            'recurring.*.jenis'            => ['required', 'in:pemasukan,pengeluaran'],
-            'recurring.*.jumlah'           => ['required', 'numeric', 'min:1'],
-            'recurring.*.frekuensi'        => ['required', 'in:harian,mingguan,bulanan,tahunan'],
-            'recurring.*.tanggal_mulai'    => ['required', 'date'],
-            'recurring.*.sumber_transaksi_id' => ['nullable', 'integer', 'exists:sumber_transaksi,id'],
-        ]);
-
-        if (! empty($validated['recurring'])) {
-            $householdId = $request->user()->household_id;
-            $userId      = $request->user()->id;
-
-            DB::transaction(function () use ($validated, $householdId, $userId) {
-                foreach ($validated['recurring'] as $item) {
-                    RecurringTransaksi::create([
-                        'household_id'        => $householdId,
-                        'user_id'             => $userId,
-                        'nama'                => $item['nama'],
-                        'jenis'               => $item['jenis'],
-                        'jumlah'              => $item['jumlah'],
-                        'frekuensi'           => $item['frekuensi'],
-                        'tanggal_mulai'       => $item['tanggal_mulai'],
-                        'sumber_transaksi_id' => $item['sumber_transaksi_id'] ?? null,
-                        'is_active'           => true,
-                    ]);
-                }
-            });
-        }
-
-        session(['onboarding_step' => 5]);
-
-        return redirect()->route('onboarding.index')
-            ->with('success', 'Transaksi rutin berhasil disimpan.');
-    }
-
-    public function selesai(Request $request): RedirectResponse
-    {
         $request->user()->household->update([
             'onboarding_completed' => true,
         ]);
@@ -179,6 +135,20 @@ class OnboardingController extends Controller
 
     public function skip(Request $request): RedirectResponse
     {
+        $hasSumberDana = SumberTransaksi::where('household_id', $request->user()->household_id)
+            ->exists();
+
+        if (! $hasSumberDana) {
+            session(['onboarding_step' => 2]);
+
+            return redirect()->route('onboarding.index')
+                ->with('error', 'Tambahkan minimal satu sumber dana terlebih dahulu sebelum melanjutkan. Langkah ini wajib.');
+        }
+
+        $request->user()->household->update([
+            'onboarding_completed' => true,
+        ]);
+
         session()->forget('onboarding_step');
 
         return redirect()->route('dashboard')

@@ -19,6 +19,17 @@ dan project ini menggunakan [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.8.0] — 2026-06-03
+
+### Changed
+- **Penyederhanaan wizard onboarding dari 5 langkah menjadi 3**: Household → Sumber Dana → Anggaran. Langkah "Recurring" dan "Selesai" dihilangkan agar setup awal lebih cepat.
+- **Sumber Dana kini wajib** pada onboarding (minimal satu) — tidak bisa dilewati, dengan pesan validasi yang jelas.
+
+### Removed
+- Route `POST /onboarding/recurring` (`onboarding.recurring`) dan `POST /onboarding/selesai` (`onboarding.selesai`) beserta method terkait di `OnboardingController`.
+
+---
+
 ## [1.7.1] — 2026-06-03
 
 ### Fixed

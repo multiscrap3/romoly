@@ -14,7 +14,7 @@
         body { background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%); min-height: 100vh; padding: 2rem 1rem; }
         .step-circle {
             width: 40px; height: 40px; border-radius: 50%;
-            display: inline-flex; align-items: center; justify-content-center;
+            display: inline-flex; align-items: center; justify-content: center;
             font-weight: 700; font-size: .9rem;
         }
         .step-circle.done   { background: #10b981; color: #fff; }
@@ -47,11 +47,11 @@
 
     {{-- Stepper --}}
     <div class="d-flex align-items-center justify-content-center mb-4">
-        @foreach([1 => __('onboarding.step_household'), 2 => __('onboarding.step_account'), 3 => __('onboarding.step_budget'), 4 => __('onboarding.step_recurring'), 5 => __('onboarding.step_done')] as $num => $label)
+        @foreach([1 => __('onboarding.step_household'), 2 => __('onboarding.step_account'), 3 => __('onboarding.step_budget')] as $num => $label)
             <div class="d-flex flex-column align-items-center">
                 <div class="step-circle {{ $num < $step ? 'done' : ($num === $step ? 'active' : 'todo') }}">
                     @if($num < $step)
-                        <i class="bi bi-check-lg"></i>
+                        <i class="bi bi-check2"></i>
                     @else
                         {{ $num }}
                     @endif
@@ -113,8 +113,8 @@
 
             {{-- ===== STEP 2: Sumber Dana ===== --}}
             @elseif($step === 2)
-                <h5 class="fw-bold mb-1">Sumber Dana</h5>
-                <p class="text-muted small mb-4">Tambahkan rekening bank, dompet, atau sumber dana lain yang kamu miliki.</p>
+                <h5 class="fw-bold mb-1">Sumber Dana <span class="text-danger">*</span></h5>
+                <p class="text-muted small mb-4">Tambahkan minimal satu rekening bank, dompet, atau sumber dana lain yang kamu miliki. Langkah ini <strong>wajib</strong> dan tidak bisa dilewati.</p>
 
                 <form method="POST" action="{{ route('onboarding.rekening') }}" id="form-rekening">
                     @csrf
@@ -124,8 +124,7 @@
                         <i class="bi bi-plus-circle me-1"></i> Tambah Sumber Dana
                     </button>
 
-                    <div class="d-flex justify-content-between align-items-center">
-                        <a href="{{ route('onboarding.skip') }}" class="text-muted small">{{ __('onboarding.skip') }}</a>
+                    <div class="d-flex justify-content-end align-items-center">
                         <button type="submit" class="btn btn-primary px-4">{{ __('onboarding.next') }} &rarr;</button>
                     </div>
                 </form>
@@ -133,7 +132,7 @@
             {{-- ===== STEP 3: Anggaran ===== --}}
             @elseif($step === 3)
                 <h5 class="fw-bold mb-1">Anggaran Bulanan</h5>
-                <p class="text-muted small mb-4">Atur batas pengeluaran per kategori untuk bulan ini. Boleh dilewati.</p>
+                <p class="text-muted small mb-4">Atur batas pengeluaran per kategori untuk bulan ini. Langkah terakhir &mdash; boleh dilewati.</p>
 
                 <form method="POST" action="{{ route('onboarding.anggaran') }}" id="form-anggaran">
                     @csrf
@@ -144,57 +143,12 @@
                     </button>
 
                     <div class="d-flex justify-content-between align-items-center">
-                        <a href="{{ route('onboarding.skip') }}" class="text-muted small">{{ __('onboarding.skip') }}</a>
-                        <button type="submit" class="btn btn-primary px-4">{{ __('onboarding.next') }} &rarr;</button>
+                        <a href="{{ route('onboarding.skip') }}" class="text-muted small">Lewati &amp; selesai</a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-check2 me-1"></i> {{ __('onboarding.finish') }}
+                        </button>
                     </div>
                 </form>
-
-            {{-- ===== STEP 4: Recurring ===== --}}
-            @elseif($step === 4)
-                <h5 class="fw-bold mb-1">Transaksi Rutin</h5>
-                <p class="text-muted small mb-4">Daftarkan pengeluaran atau pemasukan yang rutin terjadi (gaji, tagihan, dll).</p>
-
-                <form method="POST" action="{{ route('onboarding.recurring') }}" id="form-recurring">
-                    @csrf
-                    <div id="recurring-list"></div>
-
-                    <button type="button" class="dashed-add mb-4" onclick="addRecurring()">
-                        <i class="bi bi-plus-circle me-1"></i> Tambah Transaksi Rutin
-                    </button>
-
-                    <div class="d-flex justify-content-between align-items-center">
-                        <a href="{{ route('onboarding.skip') }}" class="text-muted small">{{ __('onboarding.skip') }}</a>
-                        <button type="submit" class="btn btn-primary px-4">{{ __('onboarding.next') }} &rarr;</button>
-                    </div>
-                </form>
-
-            {{-- ===== STEP 5: Selesai ===== --}}
-            @elseif($step === 5)
-                <div class="text-center py-4">
-                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-4"
-                         style="width:80px;height:80px;background:#d1fae5;">
-                        <i class="bi bi-check-circle-fill text-success" style="font-size:2.5rem;"></i>
-                    </div>
-                    <h4 class="fw-bold mb-2">{{ __('onboarding.done_title') }}</h4>
-                    <p class="text-muted mb-4">{{ __('onboarding.done_subtitle') }}</p>
-
-                    @if($sumberTransaksi->isEmpty())
-                        <div class="alert alert-warning text-start small">
-                            <i class="bi bi-exclamation-triangle me-2"></i>
-                            Kamu belum menambahkan sumber dana. Bisa ditambahkan nanti di menu <strong>Sumber Dana</strong>.
-                        </div>
-                    @endif
-
-                    <form method="POST" action="{{ route('onboarding.selesai') }}">
-                        @csrf
-                        <div class="d-grid mb-3">
-                            <button type="submit" class="btn btn-primary btn-lg fw-semibold">
-                                {{ __('onboarding.finish') }}
-                            </button>
-                        </div>
-                    </form>
-                    <p class="text-muted small">Undang anggota keluarga lewat menu Household setelah masuk.</p>
-                </div>
             @endif
 
         </div>
@@ -263,7 +217,8 @@ function addRekening() {
                 <select name="rekening[${i}][jenis]" class="form-select form-select-sm">
                     <option value="cash">Uang Tunai</option>
                     <option value="bank" selected>Bank</option>
-                    <option value="ewallet">E-Wallet</option>
+                    <option value="e-wallet">E-Wallet</option>
+                    <option value="kartu_kredit">Kartu Kredit</option>
                     <option value="investasi">Investasi</option>
                     <option value="lainnya">Lainnya</option>
                 </select>
@@ -303,61 +258,15 @@ function addAnggaran() {
     document.getElementById('anggaran-list').insertAdjacentHTML('beforeend', html);
 }
 
-// ===== STEP 4: Recurring =====
-var recurringCount = 0;
-function addRecurring() {
-    var i = recurringCount++;
-    var html = `
-    <div class="border rounded-3 p-3 mb-3 position-relative" id="recurring-${i}">
-        <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2"
-                onclick="removeItem('recurring-${i}')"></button>
-        <div class="mb-2">
-            <label class="form-label small fw-medium">Nama Transaksi</label>
-            <input type="text" name="recurring[${i}][nama]" required class="form-control form-control-sm"
-                   placeholder="Gaji Bulanan, Cicilan Motor...">
-        </div>
-        <div class="row g-2">
-            <div class="col-6">
-                <label class="form-label small fw-medium">Jenis</label>
-                <select name="recurring[${i}][jenis]" class="form-select form-select-sm">
-                    <option value="pengeluaran">Pengeluaran</option>
-                    <option value="pemasukan">Pemasukan</option>
-                </select>
-            </div>
-            <div class="col-6">
-                <label class="form-label small fw-medium">Jumlah (Rp)</label>
-                <input type="text" inputmode="numeric" name="recurring[${i}][jumlah]" required
-                       class="form-control form-control-sm currency-input" placeholder="500.000">
-            </div>
-            <div class="col-6">
-                <label class="form-label small fw-medium">Frekuensi</label>
-                <select name="recurring[${i}][frekuensi]" class="form-select form-select-sm">
-                    <option value="bulanan">Bulanan</option>
-                    <option value="mingguan">Mingguan</option>
-                    <option value="harian">Harian</option>
-                    <option value="tahunan">Tahunan</option>
-                </select>
-            </div>
-            <div class="col-6">
-                <label class="form-label small fw-medium">Mulai Tanggal</label>
-                <input type="date" name="recurring[${i}][tanggal_mulai]" required
-                       class="form-control form-control-sm">
-            </div>
-        </div>
-    </div>`;
-    document.getElementById('recurring-list').insertAdjacentHTML('beforeend', html);
-}
-
 function removeItem(id) {
     var el = document.getElementById(id);
     if (el) el.remove();
 }
 
-// Auto-add satu row di step 2, 3, 4
+// Auto-add satu row di step 2 & 3
 document.addEventListener('DOMContentLoaded', function () {
     if (document.getElementById('rekening-list'))  addRekening();
     if (document.getElementById('anggaran-list'))  addAnggaran();
-    if (document.getElementById('recurring-list')) addRecurring();
 });
 </script>
 

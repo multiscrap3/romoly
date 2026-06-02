@@ -158,8 +158,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/household', [OnboardingController::class, 'storeHousehold'])->name('household');
         Route::post('/rekening', [OnboardingController::class, 'storeRekening'])->name('rekening');
         Route::post('/anggaran', [OnboardingController::class, 'storeAnggaran'])->name('anggaran');
-        Route::post('/recurring', [OnboardingController::class, 'storeRecurring'])->name('recurring');
-        Route::post('/selesai', [OnboardingController::class, 'selesai'])->name('selesai');
         Route::get('/skip', [OnboardingController::class, 'skip'])->name('skip');
     });
 
