@@ -12,6 +12,35 @@
     <link rel="stylesheet" href="{{ asset('dompet/icons/bootstrap-icons/font/bootstrap-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('dompet/css/style.css') }}">
 
+    <style>
+        /* Mobile/tablet (< lg): jangan paksa form ke tengah vertikal — mulai dari atas
+           agar konten bawah (link Daftar/Masuk) tetap terlihat & bisa di-scroll. */
+        @media (max-width: 991.98px) {
+            /* Template men-set body{height:100%}, ditambah rantai flex min-height:100vh,
+               membuat dokumen ke-pin setinggi layar → form panjang (halaman daftar)
+               meluber ke bawah tanpa bisa di-scroll. Di mobile kita kembalikan ke
+               block flow normal + bebaskan tinggi html/body supaya bisa di-scroll. */
+            html, body {
+                height: auto !important;
+                min-height: 100vh;
+                overflow-y: auto !important;
+            }
+            .authincation { display: block !important; min-height: 0 !important; }
+            .authincation .container-fluid,
+            .authincation .row { min-height: auto !important; }
+
+            .auth-form-panel {
+                display: block !important;
+                min-height: 100vh;            /* tetap penuhi layar untuk background */
+            }
+            .auth-form-wrap {
+                margin-left: auto;
+                margin-right: auto;
+                padding: 28px 20px 40px !important;
+            }
+        }
+    </style>
+
     @stack('styles')
 </head>
 <body>
@@ -63,7 +92,7 @@
                         <div class="d-flex align-items-center gap-3">
                             <div class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
                                  style="width:44px;height:44px;background:rgba(255,255,255,0.15);">
-                                <i class="bi bi-piggy-bank-fill text-white fs-5"></i>
+                                <i class="bi bi-cash-stack text-white fs-5"></i>
                             </div>
                             <div>
                                 <div class="text-white fw-semibold">{{ __('auth.feature_savings') }}</div>
@@ -84,9 +113,9 @@
             </div>
 
             {{-- Panel Kanan - Form --}}
-            <div class="col-xl-6 col-lg-6 col-12 d-flex align-items-center justify-content-center"
+            <div class="col-xl-6 col-lg-6 col-12 d-flex align-items-center justify-content-center auth-form-panel"
                  style="background:#f8f9fa;min-height:100vh;">
-                <div class="w-100" style="max-width:480px;padding:40px 24px;">
+                <div class="w-100 auth-form-wrap" style="max-width:480px;padding:40px 24px;">
 
                     {{-- Logo mobile --}}
                     <div class="d-flex d-lg-none align-items-center gap-2 mb-4">
@@ -129,6 +158,33 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// Cegah double-submit: sekali form dikirim, kunci tombol submit + tampilkan spinner.
+document.addEventListener('submit', function (e) {
+    var form = e.target;
+    if (form.dataset.submitting === '1') { e.preventDefault(); return; }
+    form.dataset.submitting = '1';
+    var btn = form.querySelector('button[type="submit"], [type="submit"]');
+    if (btn) {
+        btn.disabled = true;
+        btn.dataset.originalHtml = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>' + (btn.textContent || '').trim();
+    }
+}, true);
+
+// Jika user kembali ke halaman lewat tombol back (bfcache), buka kunci tombol lagi.
+window.addEventListener('pageshow', function () {
+    document.querySelectorAll('form[data-submitting="1"]').forEach(function (form) {
+        form.dataset.submitting = '0';
+        var btn = form.querySelector('button[type="submit"], [type="submit"]');
+        if (btn && btn.dataset.originalHtml) {
+            btn.disabled = false;
+            btn.innerHTML = btn.dataset.originalHtml;
+        }
+    });
+});
+</script>
 
 @stack('scripts')
 </body>

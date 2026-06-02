@@ -19,6 +19,13 @@ dan project ini menggunakan [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.7.1] — 2026-06-03
+
+### Fixed
+- **Halaman autentikasi (login/daftar) di mobile & tablet** (`layouts/auth.blade.php`): form panjang kini dapat di-scroll. Sebelumnya rantai `min-height:100vh` + `body{height:100%}` dari template "Dompet" mem-pin dokumen setinggi layar sehingga konten bawah (mis. link "Daftar"/"Masuk") terpotong dan tak bisa dijangkau. Diperbaiki khusus viewport `< lg` tanpa mengubah tampilan desktop.
+
+---
+
 ## [1.7.0] — 2026-06-03
 
 ### Added
