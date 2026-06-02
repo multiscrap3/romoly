@@ -6,9 +6,12 @@ use App\Models\AuditLog;
 use App\Models\Household;
 use App\Models\ImportBank;
 use App\Services\AnomalyDetectionService;
+use App\Services\ChallengeService;
 use App\Services\InsightService;
+use App\Services\MomentumService;
 use App\Services\NotifikasiService;
 use App\Services\RecurringService;
+use App\Services\WeeklyReviewService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -22,6 +25,9 @@ class CronController extends Controller
         private readonly NotifikasiService $notifikasiService,
         private readonly InsightService $insightService,
         private readonly AnomalyDetectionService $anomalyDetectionService,
+        private readonly MomentumService $momentumService,
+        private readonly ChallengeService $challengeService,
+        private readonly WeeklyReviewService $weeklyReviewService,
     ) {}
 
     public function processRecurring(Request $request): JsonResponse
@@ -206,6 +212,84 @@ class CronController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal purge file import.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function gamifikasiDailyDecay(): JsonResponse
+    {
+        try {
+            $users = \App\Models\User::whereNotNull('household_id')->get();
+            foreach ($users as $user) {
+                $this->momentumService->applyDailyDecay($user);
+            }
+
+            Log::info('Cron gamifikasiDailyDecay selesai', ['total_users' => $users->count()]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Daily decay gamifikasi selesai.',
+                'data'    => ['total_users' => $users->count()],
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Cron gamifikasiDailyDecay gagal: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal daily decay.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function gamifikasiGenerateChallenges(): JsonResponse
+    {
+        try {
+            $users = \App\Models\User::whereNotNull('household_id')->get();
+            foreach ($users as $user) {
+                $this->challengeService->assignForUser($user);
+            }
+
+            Log::info('Cron gamifikasiGenerateChallenges selesai', ['total_users' => $users->count()]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Generate challenges gamifikasi selesai.',
+                'data'    => ['total_users' => $users->count()],
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Cron gamifikasiGenerateChallenges gagal: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal generate challenges.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function gamifikasiWeeklyReviews(): JsonResponse
+    {
+        try {
+            $users = \App\Models\User::whereNotNull('household_id')->get();
+            foreach ($users as $user) {
+                $this->weeklyReviewService->generateForUser($user);
+            }
+
+            Log::info('Cron gamifikasiWeeklyReviews selesai', ['total_users' => $users->count()]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Weekly reviews gamifikasi selesai.',
+                'data'    => ['total_users' => $users->count()],
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Cron gamifikasiWeeklyReviews gagal: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal generate weekly reviews.',
                 'error'   => $e->getMessage(),
             ], 500);
         }

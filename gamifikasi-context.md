@@ -1,7 +1,23 @@
+---
+id: gamifikasi-context
+title: "gamifikasi-context.md — Gamification Design Decisions"
+type: decision
+status: active
+scope: gamification
+priority: high
+tags: [gamification, xp, level, momentum, achievement, challenge, weekly-review, design-decision, implemented]
+version: "1.0.0"
+updated: 2026-05-31
+depends_on: [gamifikasi.md]
+referenced_by: [UIUXgame-context.md, CLAUDE.md]
+superseded_by: null
+implementation_status: complete
+phases_done: [1, 2, 3, 4, 5]
+---
 # Gamification System — Context & Design Decisions
 
-Dokumen ini merangkum keputusan desain yang disepakati dari diskusi review `gamifikasi.md`.
-Baca bersama `gamifikasi.md` (filosofi + spec) dan plan di `docs/superpowers/plans/2026-05-28-gamification-system.md` (implementasi teknis).
+Dokumen ini merangkum keputusan desain yang disepakati dari diskusi review [[gamifikasi]].
+Baca bersama [[gamifikasi]] (filosofi + spec) dan [[2026-05-28-gamification-system]] (implementasi teknis).
 
 ---
 

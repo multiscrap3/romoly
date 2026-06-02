@@ -19,6 +19,20 @@ dan project ini menggunakan [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.9.0] — 2026-06-03
+
+### Added
+- **Endpoint HTTP cron gamifikasi** di `CronController` (dijaga `cron.secret`), untuk dijadwalkan via cron-job.org pada shared hosting tanpa cron native:
+  - `POST /cron/gamifikasi/daily-decay` — momentum daily decay seluruh user.
+  - `POST /cron/gamifikasi/generate-challenges` — assign challenge mingguan.
+  - `POST /cron/gamifikasi/weekly-reviews` — generate weekly review.
+  - Melengkapi route yang sudah terdaftar sebelumnya (padanan command `php artisan gamification:*`).
+
+### Docs
+- `gamifikasi-context.md`: tambah frontmatter terstruktur + tautan foam (`[[...]]`) ke `gamifikasi` & plan implementasi.
+
+---
+
 ## [1.8.0] — 2026-06-03
 
 ### Changed
