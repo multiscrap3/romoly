@@ -121,6 +121,88 @@
         </div>
     </div>
 
+    {{-- Diagnostik Email & Server --}}
+    <div class="col-12">
+        <div class="card border-0 shadow-sm" style="border-radius:.75rem;">
+            <div class="card-header bg-white border-bottom py-3 px-4" style="border-radius:.75rem .75rem 0 0;">
+                <span class="fw-semibold"><i class="bi bi-envelope-gear me-2"></i>Diagnostik Email & Server</span>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4">
+
+                    {{-- Konfigurasi mail aktif --}}
+                    <div class="col-lg-5">
+                        <h6 class="fw-semibold small mb-2"><i class="bi bi-sliders me-1"></i>Konfigurasi Email Aktif</h6>
+                        <table class="table table-sm small mb-0">
+                            <tbody>
+                                <tr><td class="text-muted">Mailer</td><td><code>{{ $mail['mailer'] }}</code></td></tr>
+                                <tr><td class="text-muted">Host</td><td><code>{{ $mail['host'] }}</code></td></tr>
+                                <tr><td class="text-muted">Port</td><td><code>{{ $mail['port'] }}</code></td></tr>
+                                <tr><td class="text-muted">Username</td><td><code>{{ $mail['user'] }}</code></td></tr>
+                                <tr><td class="text-muted">From</td><td><code>{{ $mail['from'] }}</code></td></tr>
+                                <tr><td class="text-muted">Queue</td><td><code>{{ $mail['queue'] }}</code></td></tr>
+                            </tbody>
+                        </table>
+                        @if($mail['mailer'] === 'log')
+                            <div class="alert alert-warning small mt-2 mb-0 py-2">
+                                <i class="bi bi-exclamation-triangle me-1"></i>
+                                Mailer masih <code>log</code> — email tidak terkirim ke inbox. Set SMTP di <code>.env</code> lalu Bersihkan Cache.
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- IP server untuk otorisasi provider (mis. Brevo) --}}
+                    <div class="col-lg-7">
+                        <h6 class="fw-semibold small mb-2"><i class="bi bi-hdd-network me-1"></i>IP Server (untuk Authorized IPs Brevo)</h6>
+                        <p class="text-muted mb-2" style="font-size:.8rem;">
+                            Jika muncul error <code>525 Unauthorized IP address</code>, daftarkan IP keluar server ini
+                            di <strong>Brevo → Security → Authorized IPs</strong>.
+                        </p>
+
+                        @if(!empty($serverIp))
+                            <div class="alert alert-success d-flex align-items-center justify-content-between gap-2 py-2 mb-2">
+                                <span class="small mb-0">IP keluar server: <strong id="serverIpVal">{{ $serverIp }}</strong></span>
+                                <button type="button" class="btn btn-sm btn-outline-success"
+                                        onclick="navigator.clipboard && navigator.clipboard.writeText(document.getElementById('serverIpVal').textContent)">
+                                    <i class="bi bi-clipboard me-1"></i>Salin
+                                </button>
+                            </div>
+                        @endif
+
+                        <form method="POST" action="{{ route('superadmin.deploy.check-ip') }}" class="mb-3">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-search me-1"></i>{{ !empty($serverIp) ? 'Cek Ulang IP Server' : 'Cek IP Server' }}
+                            </button>
+                        </form>
+
+                        <hr class="my-3">
+
+                        {{-- Kirim email uji --}}
+                        <h6 class="fw-semibold small mb-2"><i class="bi bi-send me-1"></i>Kirim Email Uji</h6>
+                        <p class="text-muted mb-2" style="font-size:.8rem;">
+                            Pengganti <code>php artisan mail:test</code>. Dikirim langsung — error SMTP (mis. 525) akan tampil di bawah.
+                        </p>
+                        <form method="POST" action="{{ route('superadmin.deploy.test-email') }}" class="row g-2">
+                            @csrf
+                            <div class="col-sm-8">
+                                <input type="email" name="email" required
+                                       value="{{ old('email', auth()->user()->email) }}"
+                                       class="form-control form-control-sm" placeholder="email@tujuan.com">
+                            </div>
+                            <div class="col-sm-4">
+                                <button type="submit" class="btn btn-primary btn-sm w-100">
+                                    <i class="bi bi-envelope-arrow-up me-1"></i>Kirim Uji
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Output hasil migrasi/seed terakhir --}}
     @if(!empty($output))
         <div class="col-12">

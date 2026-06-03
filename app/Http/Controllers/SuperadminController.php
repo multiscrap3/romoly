@@ -199,7 +199,102 @@ class SuperadminController extends Controller
             'pending'    => $pending,
             'output'     => session('deploy_output'),
             'seeders'    => $this->seederCatalog(),
+            'mail'       => [
+                'mailer' => config('mail.default'),
+                'host'   => config('mail.mailers.smtp.host'),
+                'port'   => config('mail.mailers.smtp.port'),
+                'user'   => $this->maskSecret((string) config('mail.mailers.smtp.username')),
+                'from'   => config('mail.from.address'),
+                'queue'  => config('queue.default'),
+            ],
+            'serverIp'   => session('server_ip'),
         ]);
+    }
+
+    /**
+     * Samarkan sebagian string rahasia untuk ditampilkan di UI.
+     */
+    private function maskSecret(string $value): string
+    {
+        if ($value === '' || $value === 'null') {
+            return '(kosong)';
+        }
+        $len = mb_strlen($value);
+        if ($len <= 4) {
+            return str_repeat('•', $len);
+        }
+        return mb_substr($value, 0, 4) . str_repeat('•', max(3, $len - 8)) . mb_substr($value, -4);
+    }
+
+    /**
+     * Ambil IP keluar (outbound) server — untuk diotorisasi di provider email (mis. Brevo).
+     * Tanpa SSH/terminal: panggil layanan echo-IP dengan timeout pendek + fallback.
+     */
+    public function checkServerIp(): RedirectResponse
+    {
+        $services = [
+            'https://api.ipify.org',
+            'https://ifconfig.me/ip',
+            'https://icanhazip.com',
+        ];
+
+        $ip = null;
+        foreach ($services as $url) {
+            try {
+                $ctx = stream_context_create(['http' => ['timeout' => 6], 'https' => ['timeout' => 6]]);
+                $res = @file_get_contents($url, false, $ctx);
+                $res = is_string($res) ? trim($res) : '';
+                if (filter_var($res, FILTER_VALIDATE_IP)) {
+                    $ip = $res;
+                    break;
+                }
+            } catch (\Throwable $e) {
+                // coba layanan berikutnya
+            }
+        }
+
+        if ($ip === null) {
+            return back()->with('error', 'Gagal mengambil IP server (semua layanan timeout/diblokir). Coba lagi atau cek IP via cPanel.');
+        }
+
+        SecurityLog::record('superadmin.check_ip', 'low', ['ip' => $ip]);
+
+        return back()->with('server_ip', $ip)
+            ->with('success', 'IP keluar server: ' . $ip . ' — daftarkan IP ini di Authorized IPs provider email Anda.');
+    }
+
+    /**
+     * Kirim email uji dari UI (pengganti `php artisan mail:test` saat tanpa terminal).
+     * Mengirim LANGSUNG (sendNow) agar error SMTP tampil seketika di layar.
+     */
+    public function sendTestEmail(Request $request): RedirectResponse
+    {
+        $request->validate(['email' => ['required', 'email']]);
+        $email = (string) $request->input('email');
+
+        try {
+            \Illuminate\Support\Facades\Mail::to($email)->sendNow(new \App\Mail\GeneralNotificationMail(
+                judul: 'Email Uji Coba ' . config('app.name'),
+                pesan: 'Jika Anda menerima email ini, konfigurasi pengiriman email ' . config('app.name') . ' sudah benar. Dikirim ' . now()->translatedFormat('d F Y, H:i') . ' WIB.',
+                tipe: 'success',
+                ctaUrl: config('app.url'),
+                ctaLabel: 'Buka ' . config('app.name'),
+            ));
+
+            SecurityLog::record('superadmin.test_email', 'low', ['to' => $email, 'mailer' => config('mail.default')]);
+
+            $extra = config('mail.default') === 'log'
+                ? ' (Mailer = "log": email ditulis ke storage/logs, tidak ke inbox.)'
+                : '';
+
+            return back()->with('success', 'Email uji terkirim ke ' . $email . '.' . $extra);
+        } catch (\Throwable $e) {
+            Log::error('Superadmin test email gagal', ['to' => $email, 'error' => $e->getMessage()]);
+
+            return back()
+                ->with('error', 'Gagal kirim email uji.')
+                ->with('deploy_output', $e->getMessage());
+        }
     }
 
     /**
