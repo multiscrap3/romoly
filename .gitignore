@@ -45,6 +45,19 @@ PROGRESS.md
 *_FINAL.md
 *_LATEST.md
 
+# Context files internal (master context & roadmap — jangan ke production)
+CLAUDE.md
+context-index.md
+UIUXgame-context.md
+UIUXgame.md
+freemium-context.md
+gamifikasi-context.md
+gamifikasi.md
+tag-context.md
+userguide.md
+/docs/superpowers/
+/docs/archive/
+
 # File development/testing tidak perlu di production
 phpunit.xml
 .styleci.yml
