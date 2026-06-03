@@ -197,6 +197,7 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'superadmi
     Route::get('/deploy', [SuperadminController::class, 'deploy'])->name('deploy');
     Route::post('/deploy/migrate', [SuperadminController::class, 'runMigrate'])->name('deploy.migrate');
     Route::post('/deploy/clear-cache', [SuperadminController::class, 'clearCache'])->name('deploy.clear-cache');
+    Route::post('/deploy/seed', [SuperadminController::class, 'runSeed'])->name('deploy.seed');
 });
 
 // API-like routes for AJAX calls

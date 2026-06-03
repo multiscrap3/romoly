@@ -82,12 +82,51 @@
         </div>
     </div>
 
-    {{-- Output hasil migrasi terakhir --}}
+    {{-- Seed Data Awal --}}
+    <div class="col-12">
+        <div class="card border-0 shadow-sm" style="border-radius:.75rem;">
+            <div class="card-header bg-white border-bottom py-3 px-4" style="border-radius:.75rem .75rem 0 0;">
+                <span class="fw-semibold"><i class="bi bi-box-seam me-2"></i>Seed Data Awal</span>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-muted small mb-3">
+                    Mengisi data referensi yang dibutuhkan aplikasi. Seeder di bawah ini
+                    <strong>idempoten</strong> — aman dijalankan berulang, tidak menduplikasi data yang sudah ada.
+                </p>
+                <div class="row g-3">
+                    @foreach($seeders as $key => $s)
+                    <div class="col-md-6">
+                        <div class="border rounded p-3 h-100 d-flex flex-column" style="border-radius:.75rem;">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <span class="fw-semibold small">{{ $s['label'] }}</span>
+                                <span class="badge rounded-pill {{ $s['count'] > 0 ? 'bg-success' : 'bg-secondary' }}">
+                                    {{ $s['count'] }} data
+                                </span>
+                            </div>
+                            <p class="text-muted mb-3" style="font-size:.8rem;">{{ $s['desc'] }}</p>
+                            <form method="POST" action="{{ route('superadmin.deploy.seed') }}" class="mt-auto"
+                                  onsubmit="return confirm('Jalankan seeder {{ $s['label'] }} sekarang?');">
+                                @csrf
+                                <input type="hidden" name="seeder" value="{{ $key }}">
+                                <button type="submit" class="btn btn-sm {{ $s['count'] > 0 ? 'btn-outline-primary' : 'btn-primary' }}">
+                                    <i class="bi bi-play-fill me-1"></i>
+                                    {{ $s['count'] > 0 ? 'Jalankan Ulang' : 'Jalankan Seeder' }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Output hasil migrasi/seed terakhir --}}
     @if(!empty($output))
         <div class="col-12">
             <div class="card border-0 shadow-sm" style="border-radius:.75rem;">
                 <div class="card-header bg-white border-bottom py-3 px-4" style="border-radius:.75rem .75rem 0 0;">
-                    <span class="fw-semibold"><i class="bi bi-terminal me-2"></i>Output Migrasi Terakhir</span>
+                    <span class="fw-semibold"><i class="bi bi-terminal me-2"></i>Output Terakhir</span>
                 </div>
                 <div class="card-body p-0">
                     <pre class="mb-0 p-4 small" style="background:#1e1b4b;color:#c4b5fd;border-radius:0 0 .75rem .75rem;white-space:pre-wrap;word-break:break-word;">{{ trim($output) }}</pre>

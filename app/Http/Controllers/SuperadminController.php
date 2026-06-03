@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Achievement;
 use App\Models\AuditLog;
+use App\Models\Challenge;
 use App\Models\Household;
 use App\Models\SecurityLog;
 use App\Models\User;
+use Database\Seeders\AchievementSeeder;
+use Database\Seeders\ChallengeSeeder;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -193,7 +198,71 @@ class SuperadminController extends Controller
             'totalCount' => count($allNames),
             'pending'    => $pending,
             'output'     => session('deploy_output'),
+            'seeders'    => $this->seederCatalog(),
         ]);
+    }
+
+    /**
+     * Katalog seeder yang aman dijalankan dari UI (idempoten — pakai
+     * updateOrCreate/firstOrCreate, tidak menduplikasi data).
+     *
+     * @return array<string, array{label: string, desc: string, count: int, classes: array<int, class-string>}>
+     */
+    private function seederCatalog(): array
+    {
+        return [
+            'gamifikasi' => [
+                'label'   => 'Gamifikasi (Achievement & Challenge)',
+                'desc'    => 'Mengisi daftar achievement & tantangan. Wajib agar section "Tantangan Aktif" dan "Koleksi Achievement" muncul.',
+                'count'   => Achievement::count() + Challenge::count(),
+                'classes' => [AchievementSeeder::class, ChallengeSeeder::class],
+            ],
+            'roles' => [
+                'label'   => 'Roles & Permission',
+                'desc'    => 'Memastikan role admin/member/viewer dan permission Spatie tersedia.',
+                'count'   => \Spatie\Permission\Models\Role::count(),
+                'classes' => [RolePermissionSeeder::class],
+            ],
+        ];
+    }
+
+    /**
+     * Jalankan seeder dari whitelist (production-safe, --force, idempoten).
+     */
+    public function runSeed(Request $request): RedirectResponse
+    {
+        $key     = (string) $request->input('seeder');
+        $catalog = $this->seederCatalog();
+
+        if (! isset($catalog[$key])) {
+            return back()->with('error', 'Seeder tidak dikenal atau tidak diizinkan.');
+        }
+
+        $outputs = [];
+
+        try {
+            foreach ($catalog[$key]['classes'] as $class) {
+                Artisan::call('db:seed', ['--class' => $class, '--force' => true]);
+                $outputs[] = '$ db:seed --class=' . class_basename($class) . "\n" . trim(Artisan::output());
+            }
+
+            $output = implode("\n\n", $outputs);
+
+            SecurityLog::record('superadmin.seed', 'high', [
+                'seeder' => $key,
+                'output' => mb_substr($output, 0, 5000),
+            ]);
+
+            return back()
+                ->with('success', 'Seeder "' . $catalog[$key]['label'] . '" selesai dijalankan.')
+                ->with('deploy_output', $output);
+        } catch (\Throwable $e) {
+            Log::error('Superadmin seed gagal', ['seeder' => $key, 'error' => $e->getMessage()]);
+
+            return back()
+                ->with('error', 'Seeder gagal: ' . $e->getMessage())
+                ->with('deploy_output', implode("\n\n", $outputs) . "\n" . Artisan::output());
+        }
     }
 
     /**
