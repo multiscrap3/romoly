@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CronController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DeployController;
 use App\Http\Controllers\GamificationController;
 use App\Http\Controllers\ImportBankController;
 use App\Http\Controllers\LaporanController;
@@ -181,6 +182,14 @@ Route::prefix('cron')->name('cron.')->middleware('cron.secret')->group(function 
     Route::post('/gamifikasi/generate-challenges', [CronController::class, 'gamifikasiGenerateChallenges'])->name('gamifikasi.generate-challenges');
     Route::post('/gamifikasi/weekly-reviews', [CronController::class, 'gamifikasiWeeklyReviews'])->name('gamifikasi.weekly-reviews');
     Route::get('/health', [CronController::class, 'health'])->name('health');
+});
+
+// Deploy (manual, shared hosting tanpa SSH) — dijaga cron.secret.
+// Pakai GET agar bisa dipicu langsung dari browser/cPanel.
+Route::prefix('deploy')->name('deploy.')->middleware('cron.secret')->group(function () {
+    Route::get('/migrate-status', [DeployController::class, 'migrateStatus'])->name('migrate-status');
+    Route::get('/migrate', [DeployController::class, 'migrate'])->name('migrate');
+    Route::get('/clear-cache', [DeployController::class, 'clearCache'])->name('clear-cache');
 });
 
 // Superadmin

@@ -19,6 +19,17 @@ dan project ini menggunakan [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.10.0] — 2026-06-03
+
+### Added
+- **Endpoint deploy untuk shared hosting tanpa SSH** (`DeployController`, dijaga `cron.secret`), agar migrasi & clear-cache bisa dijalankan dari browser/cPanel:
+  - `GET /deploy/migrate-status?secret=XXXX` — pratinjau migrasi (read-only): mana yang sudah jalan & mana yang tertunda.
+  - `GET /deploy/migrate?secret=XXXX` — jalankan `migrate --force` (idempoten; hanya memproses migrasi tertunda). Dicatat ke `SecurityLog` (`deploy.migrate`).
+  - `GET /deploy/clear-cache?secret=XXXX` — `config:clear` + `route:clear` + `view:clear` + `cache:clear` (pengganti `optimize:clear`).
+  - Memakai `CRON_SECRET_KEY` yang sama dengan endpoint cron.
+
+---
+
 ## [1.9.0] — 2026-06-03
 
 ### Added
