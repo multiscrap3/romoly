@@ -1,6 +1,7 @@
 *.log
 .DS_Store
 .env
+
 .env.backup
 .env.production
 .phpactor.json
@@ -56,3 +57,7 @@ README.md
 
 # File berbahaya — expose struktur internal
 .env.example
+
+# Tooling lokal & artefak (jangan di-commit)
+/.claude
+vendor.zip
