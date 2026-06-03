@@ -2,7 +2,12 @@
 
 use App\Http\Controllers\AIController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\EmailVerificationNotificationController;
+use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\CronController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GamificationController;
@@ -53,11 +58,37 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [RegisterController::class, 'store'])
         ->middleware('throttle:3,1')
         ->name('register.store');
+
+    // ── Lupa / Reset Password ──
+    Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])
+        ->name('password.request');
+    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
+        ->middleware('throttle:5,1')
+        ->name('password.email');
+    Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])
+        ->name('password.reset');
+    Route::post('/reset-password', [NewPasswordController::class, 'store'])
+        ->middleware('throttle:5,1')
+        ->name('password.store');
 });
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
+
+// ── Verifikasi Email (soft — user tetap bisa akses dashboard) ──
+Route::middleware('auth')->group(function () {
+    Route::get('/email/verify', EmailVerificationPromptController::class)
+        ->name('verification.notice');
+
+    Route::get('/email/verify/{id}/{hash}', VerifyEmailController::class)
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('verification.verify');
+
+    Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
+        ->middleware('throttle:6,1')
+        ->name('verification.send');
+});
 
 // Authenticated routes
 Route::middleware(['auth'])->group(function () {
@@ -141,6 +172,7 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/password', [\App\Http\Controllers\SettingController::class, 'updatePassword'])->name('password.update');
         Route::put('/household', [\App\Http\Controllers\SettingController::class, 'updateHousehold'])->name('household.update');
         Route::put('/preferences', [\App\Http\Controllers\SettingController::class, 'updatePreferences'])->name('preferences.update');
+        Route::put('/notifications', [\App\Http\Controllers\SettingController::class, 'updateNotifications'])->name('notifications.update');
         Route::delete('/reset-data', [\App\Http\Controllers\SettingController::class, 'resetTransaksiData'])->name('reset-data');
     });
     
@@ -180,6 +212,7 @@ Route::prefix('cron')->name('cron.')->middleware('cron.secret')->group(function 
     Route::post('/gamifikasi/daily-decay', [CronController::class, 'gamifikasiDailyDecay'])->name('gamifikasi.daily-decay');
     Route::post('/gamifikasi/generate-challenges', [CronController::class, 'gamifikasiGenerateChallenges'])->name('gamifikasi.generate-challenges');
     Route::post('/gamifikasi/weekly-reviews', [CronController::class, 'gamifikasiWeeklyReviews'])->name('gamifikasi.weekly-reviews');
+    Route::post('/process-mail', [CronController::class, 'processMailQueue'])->name('process-mail');
     Route::get('/health', [CronController::class, 'health'])->name('health');
 });
 

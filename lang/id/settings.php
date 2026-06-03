@@ -8,7 +8,15 @@ return [
     'tab_password'           => 'Password',
     'tab_household'          => 'Household',
     'tab_preferences'        => 'Preferensi',
+    'tab_notifications'      => 'Notifikasi',
     'tab_privacy'            => 'Privasi & Data',
+
+    // Notifications
+    'notifications'            => 'Notifikasi Email',
+    'notifications_desc'       => 'Atur notifikasi dan pengingat yang dikirim ke email Anda.',
+    'email_notifications'      => 'Terima notifikasi via email',
+    'email_notifications_desc' => 'Pengingat anggaran melebihi batas, jatuh tempo hutang/piutang, target tabungan tercapai, dan info penting lainnya akan dikirim ke email Anda.',
+    'email_unverified_notice'  => 'Email Anda belum terverifikasi. Notifikasi email baru akan terkirim setelah Anda memverifikasi alamat email.',
 
     // Profile
     'edit_profile'           => 'Ubah Profil',

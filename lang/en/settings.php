@@ -8,7 +8,15 @@ return [
     'tab_password'           => 'Password',
     'tab_household'          => 'Household',
     'tab_preferences'        => 'Preferences',
+    'tab_notifications'      => 'Notifications',
     'tab_privacy'            => 'Privacy & Data',
+
+    // Notifications
+    'notifications'            => 'Email Notifications',
+    'notifications_desc'       => 'Manage notifications and reminders sent to your email.',
+    'email_notifications'      => 'Receive notifications via email',
+    'email_notifications_desc' => 'Budget overspend alerts, debt/receivable due reminders, savings goals reached, and other important info will be sent to your email.',
+    'email_unverified_notice'  => 'Your email is not verified yet. Email notifications will only be sent after you verify your email address.',
 
     // Profile
     'edit_profile'           => 'Edit Profile',

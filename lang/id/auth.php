@@ -40,4 +40,24 @@ return [
     'feature_family_sub'    => 'Satu akun untuk seluruh keluarga',
     'feature_savings'       => 'Tabungan & Anggaran',
     'feature_savings_sub'   => 'Pantau target keuangan keluarga',
+
+    // Lupa Password
+    'forgot_title'          => 'Lupa Password?',
+    'forgot_subtitle'       => 'Masukkan email Anda, kami akan mengirim tautan untuk mengatur ulang password.',
+    'send_reset_link'       => 'Kirim Tautan Reset',
+    'back_to_login'         => 'Kembali ke halaman Masuk',
+
+    // Reset Password
+    'reset_title'           => 'Atur Ulang Password',
+    'reset_subtitle'        => 'Buat password baru untuk akun Anda.',
+    'new_password'          => 'Password Baru',
+    'reset_btn'             => 'Simpan Password Baru',
+
+    // Verifikasi Email
+    'verify_title'          => 'Verifikasi Email Anda',
+    'verify_subtitle'       => 'Kami telah mengirim tautan verifikasi ke email Anda. Silakan klik tautan tersebut untuk mengaktifkan akun sepenuhnya.',
+    'verify_hint'           => 'Belum menerima email? Cek folder spam, atau kirim ulang tautan baru di bawah ini.',
+    'verify_resend'         => 'Kirim Ulang Tautan Verifikasi',
+    'verify_continue'       => 'Lanjut ke Dashboard',
+    'verify_logout'         => 'Keluar',
 ];

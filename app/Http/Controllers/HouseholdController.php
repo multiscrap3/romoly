@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\HouseholdInvitationMail;
 use App\Models\Household;
 use App\Models\HouseholdInvitation;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class HouseholdController extends Controller
@@ -61,6 +64,24 @@ class HouseholdController extends Controller
     }
 
     /**
+     * Masukkan email undangan ke antrian. Mengembalikan true jika berhasil di-queue.
+     * Gagal queue tidak boleh menggagalkan alur undangan (link manual tetap tersedia).
+     */
+    private function queueInvitationEmail(HouseholdInvitation $invitation): bool
+    {
+        try {
+            Mail::to($invitation->email)->queue(new HouseholdInvitationMail($invitation));
+            return true;
+        } catch (\Throwable $e) {
+            Log::error('Gagal queue email undangan household: ' . $e->getMessage(), [
+                'invitation_id' => $invitation->id,
+                'email'         => $invitation->email,
+            ]);
+            return false;
+        }
+    }
+
+    /**
      * Invite member to household
      */
     public function invite(Request $request)
@@ -84,9 +105,12 @@ class HouseholdController extends Controller
                 ->first();
 
             if ($existingInvitation) {
+                // Kirim ulang email undangan yang sudah ada
+                $this->queueInvitationEmail($existingInvitation);
+
                 $link = route('register', ['token' => $existingInvitation->token]);
                 return back()->with('invite_link', $link)
-                             ->with('info', 'Undangan sudah pernah dikirim. Salin link di bawah dan bagikan ke ' . $request->email);
+                             ->with('info', 'Undangan untuk ' . $request->email . ' sudah ada — email dikirim ulang. Link cadangan tersedia di bawah.');
             }
 
             // Cek jika user sudah ada dan sudah di household lain
@@ -118,9 +142,15 @@ class HouseholdController extends Controller
                 ]);
             }
 
+            // Kirim email undangan (masuk antrian, diproses cron /cron/process-mail)
+            $emailSent = $this->queueInvitationEmail($invitation);
+
             $link = route('register', ['token' => $invitation->token]);
-            return back()->with('invite_link', $link)
-                         ->with('success', 'Undangan berhasil dibuat. Salin link di bawah dan bagikan ke ' . $request->email);
+            $msg  = $emailSent
+                ? 'Undangan telah dikirim ke ' . $request->email . '. Link cadangan tersedia di bawah untuk dibagikan manual.'
+                : 'Undangan berhasil dibuat. Salin link di bawah dan bagikan ke ' . $request->email;
+
+            return back()->with('invite_link', $link)->with('success', $msg);
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal mengirim undangan: ' . $e->getMessage());
         }

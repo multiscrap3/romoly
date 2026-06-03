@@ -140,6 +140,26 @@ class SettingController extends Controller
     }
 
     /**
+     * Update preferensi notifikasi email per-user (opt-in / opt-out).
+     */
+    public function updateNotifications(Request $request)
+    {
+        $request->validate([
+            'email_notifications' => 'nullable|boolean',
+        ]);
+
+        try {
+            $user = $request->user();
+            $user->email_notifications = $request->boolean('email_notifications');
+            $user->save();
+
+            return back()->with('success', __('settings.save') . ' — ' . __('messages.success'));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal menyimpan preferensi notifikasi: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Reset all transaction data for the current household.
      * Permanently deletes every Transaksi record (including soft-deleted)
      * and zeroes out saldo_saat_ini on all SumberTransaksi so the

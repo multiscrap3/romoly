@@ -6,12 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable, HasRoles, SoftDeletes;
 
@@ -22,6 +23,7 @@ class User extends Authenticatable
         'household_id',
         'avatar',
         'is_active',
+        'email_notifications',
         'dashboard_cards',
         'tour_progress',
         'consent_given_at',
@@ -40,6 +42,7 @@ class User extends Authenticatable
             'email_verified_at'  => 'datetime',
             'password'           => 'hashed',
             'is_active'          => 'boolean',
+            'email_notifications'=> 'boolean',
             'dashboard_cards'    => 'array',
             'tour_progress'      => 'array',
             'consent_given_at'   => 'datetime',
@@ -104,6 +107,37 @@ class User extends Authenticatable
     {
         $this->tour_progress = null;
         $this->save();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Notifikasi Email (Bahasa Indonesia, queued)
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Override: kirim email verifikasi versi Bahasa Indonesia (queued).
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new \App\Notifications\VerifyEmailQueued());
+    }
+
+    /**
+     * Override: kirim email reset password versi Bahasa Indonesia (queued).
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new \App\Notifications\ResetPasswordQueued($token));
+    }
+
+    /**
+     * Apakah user bersedia menerima notifikasi non-auth via email.
+     * Hanya kirim bila opt-in DAN email sudah terverifikasi.
+     */
+    public function wantsEmailNotifications(): bool
+    {
+        return (bool) $this->email_notifications && $this->hasVerifiedEmail();
     }
 
     /**

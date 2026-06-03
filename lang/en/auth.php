@@ -40,4 +40,24 @@ return [
     'feature_family_sub'    => 'One account for the whole family',
     'feature_savings'       => 'Savings & Budgets',
     'feature_savings_sub'   => 'Track your family financial goals',
+
+    // Forgot Password
+    'forgot_title'          => 'Forgot Password?',
+    'forgot_subtitle'       => 'Enter your email and we will send you a link to reset your password.',
+    'send_reset_link'       => 'Send Reset Link',
+    'back_to_login'         => 'Back to Sign In',
+
+    // Reset Password
+    'reset_title'           => 'Reset Password',
+    'reset_subtitle'        => 'Create a new password for your account.',
+    'new_password'          => 'New Password',
+    'reset_btn'             => 'Save New Password',
+
+    // Email Verification
+    'verify_title'          => 'Verify Your Email',
+    'verify_subtitle'       => 'We have sent a verification link to your email. Please click it to fully activate your account.',
+    'verify_hint'           => 'Did not receive the email? Check your spam folder, or resend a new link below.',
+    'verify_resend'         => 'Resend Verification Link',
+    'verify_continue'       => 'Continue to Dashboard',
+    'verify_logout'         => 'Log Out',
 ];

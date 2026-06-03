@@ -15,6 +15,7 @@ use App\Services\WeeklyReviewService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -305,5 +306,54 @@ class CronController extends Controller
                 'timezone'    => config('app.timezone'),
             ],
         ]);
+    }
+
+    /**
+     * Proses antrian email (database queue) untuk shared hosting tanpa worker daemon.
+     * Dipanggil cron-job.org tiap 1-5 menit. Memproses semua job tertunda lalu berhenti
+     * (--stop-when-empty), dengan batas waktu agar tidak melebihi timeout request cron.
+     */
+    public function processMailQueue(Request $request): JsonResponse
+    {
+        $pendingBefore = DB::table('jobs')->count();
+        $failedBefore  = DB::table('failed_jobs')->count();
+
+        try {
+            \Illuminate\Support\Facades\Artisan::call('queue:work', [
+                '--stop-when-empty' => true,
+                '--max-time'        => (int) $request->input('max_time', 50),
+                '--tries'           => 3,
+                '--sleep'           => 0,
+                '--quiet'           => true,
+            ]);
+
+            $pendingAfter = DB::table('jobs')->count();
+            $failedAfter  = DB::table('failed_jobs')->count();
+            $processed    = max(0, $pendingBefore - $pendingAfter);
+
+            Log::info('Cron processMailQueue selesai', [
+                'processed'   => $processed,
+                'pending_now' => $pendingAfter,
+                'new_failed'  => max(0, $failedAfter - $failedBefore),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Antrian email diproses.',
+                'data'    => [
+                    'processed'   => $processed,
+                    'pending_now' => $pendingAfter,
+                    'new_failed'  => max(0, $failedAfter - $failedBefore),
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Cron processMailQueue gagal: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memproses antrian email.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
     }
 }

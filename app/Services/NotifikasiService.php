@@ -2,19 +2,33 @@
 
 namespace App\Services;
 
+use App\Mail\GeneralNotificationMail;
 use App\Models\Notifikasi;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class NotifikasiService
 {
     /**
-     * Send notification to user
+     * Send notification to user.
+     *
+     * @param bool        $email    Jika true, kirim juga via email (bila user opt-in & verified).
+     * @param string|null $ctaUrl   URL tombol pada email (opsional).
+     * @param string|null $ctaLabel Label tombol pada email (opsional).
      */
-    public function send(int $userId, string $judul, string $pesan, string $tipe = 'info'): Notifikasi
-    {
+    public function send(
+        int $userId,
+        string $judul,
+        string $pesan,
+        string $tipe = 'info',
+        bool $email = false,
+        ?string $ctaUrl = null,
+        ?string $ctaLabel = null
+    ): Notifikasi {
         $user = User::findOrFail($userId);
 
-        return Notifikasi::create([
+        $notifikasi = Notifikasi::create([
             'household_id' => $user->household_id,
             'user_id' => $userId,
             'judul' => $judul,
@@ -22,13 +36,28 @@ class NotifikasiService
             'tipe' => $tipe,
             'dibaca' => false,
         ]);
+
+        if ($email) {
+            $this->maybeEmail($user, $judul, $pesan, $tipe, $ctaUrl, $ctaLabel);
+        }
+
+        return $notifikasi;
     }
 
     /**
-     * Send notification to all household members
+     * Send notification to all household members.
+     *
+     * @param bool $email Jika true, kirim juga via email ke tiap anggota yang opt-in & verified.
      */
-    public function sendToHousehold(int $householdId, string $judul, string $pesan, string $tipe = 'info'): int
-    {
+    public function sendToHousehold(
+        int $householdId,
+        string $judul,
+        string $pesan,
+        string $tipe = 'info',
+        bool $email = false,
+        ?string $ctaUrl = null,
+        ?string $ctaLabel = null
+    ): int {
         $users = User::where('household_id', $householdId)->get();
         $count = 0;
 
@@ -41,10 +70,48 @@ class NotifikasiService
                 'tipe' => $tipe,
                 'dibaca' => false,
             ]);
+
+            if ($email) {
+                $this->maybeEmail($user, $judul, $pesan, $tipe, $ctaUrl, $ctaLabel);
+            }
+
             $count++;
         }
 
         return $count;
+    }
+
+    /**
+     * Queue email notifikasi bila user mengaktifkannya & email terverifikasi.
+     * Gagal queue dicatat ke log, tidak menggagalkan alur notifikasi in-app.
+     */
+    private function maybeEmail(
+        User $user,
+        string $judul,
+        string $pesan,
+        string $tipe,
+        ?string $ctaUrl,
+        ?string $ctaLabel
+    ): void {
+        if (! $user->wantsEmailNotifications()) {
+            return;
+        }
+
+        try {
+            Mail::to($user->email)->queue(new GeneralNotificationMail(
+                judul: $judul,
+                pesan: $pesan,
+                tipe: $tipe,
+                ctaUrl: $ctaUrl,
+                ctaLabel: $ctaLabel,
+                greetingName: $user->name,
+            ));
+        } catch (\Throwable $e) {
+            Log::error('Gagal queue email notifikasi: ' . $e->getMessage(), [
+                'user_id' => $user->id,
+                'judul'   => $judul,
+            ]);
+        }
     }
 
     /**
@@ -141,7 +208,12 @@ class NotifikasiService
             $tipe = 'warning';
         }
 
-        return $this->send($userId, $judul, $pesan, $tipe);
+        return $this->send(
+            $userId, $judul, $pesan, $tipe,
+            email: true,
+            ctaUrl: route('anggaran.index'),
+            ctaLabel: 'Lihat Anggaran'
+        );
     }
 
     /**
@@ -162,8 +234,13 @@ class NotifikasiService
     {
         $judul = 'Reminder Jatuh Tempo';
         $pesan = ucfirst($jenis) . " kepada {$namaPihak} sebesar Rp " . number_format($sisa, 0, ',', '.') . " akan jatuh tempo pada {$jatuhTempo}";
-        
-        return $this->send($userId, $judul, $pesan, 'warning');
+
+        return $this->send(
+            $userId, $judul, $pesan, 'warning',
+            email: true,
+            ctaUrl: route('hutang-piutang.index'),
+            ctaLabel: 'Lihat Hutang/Piutang'
+        );
     }
 
     /**

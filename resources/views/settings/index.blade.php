@@ -17,6 +17,7 @@
                 'password'  => __('settings.tab_password'),
                 'household' => __('settings.tab_household'),
                 'preferensi'=> __('settings.tab_preferences'),
+                'notifikasi'=> __('settings.tab_notifications'),
                 'privasi'   => __('settings.tab_privacy'),
             ] as $t => $label)
                 <li class="nav-item" role="presentation">
@@ -171,6 +172,44 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary">{{ __('settings.save_preferences') }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {{-- Notifikasi --}}
+        <div class="tab-pane fade {{ $activeTab === 'notifikasi' ? 'show active' : '' }}" id="tab-notifikasi" role="tabpanel">
+            <div class="card border-0 shadow-sm" style="border-radius:.75rem;">
+                <div class="card-body p-4 p-md-5">
+                    <h6 class="fw-semibold mb-1">{{ __('settings.notifications') }}</h6>
+                    <p class="small text-muted mb-4">{{ __('settings.notifications_desc') }}</p>
+
+                    <form method="POST" action="{{ route('settings.notifications.update') }}">
+                        @csrf @method('PUT')
+
+                        <div class="d-flex justify-content-between align-items-start p-3 border rounded mb-3">
+                            <div class="me-3">
+                                <div class="fw-medium small">
+                                    <i class="bi bi-envelope-at me-1 text-primary"></i>{{ __('settings.email_notifications') }}
+                                </div>
+                                <div class="small text-muted">{{ __('settings.email_notifications_desc') }}</div>
+                            </div>
+                            <div class="form-check form-switch flex-shrink-0 mt-1">
+                                <input class="form-check-input" type="checkbox" name="email_notifications" value="1"
+                                       id="emailNotif"
+                                       {{ auth()->user()->email_notifications ? 'checked' : '' }}>
+                                <label class="form-check-label small" for="emailNotif">{{ __('settings.ai_active') }}</label>
+                            </div>
+                        </div>
+
+                        @if(! auth()->user()->hasVerifiedEmail())
+                            <div class="alert alert-warning d-flex align-items-start gap-2 small" role="alert">
+                                <i class="bi bi-exclamation-triangle mt-1"></i>
+                                <span>{{ __('settings.email_unverified_notice') }}</span>
+                            </div>
+                        @endif
+
+                        <button type="submit" class="btn btn-primary">{{ __('settings.save') }}</button>
                     </form>
                 </div>
             </div>
