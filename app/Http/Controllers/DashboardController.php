@@ -116,6 +116,7 @@ class DashboardController extends Controller
         $topTags                = $this->dashboardService->getTopTags(5);
         $gamificationSummary    = $this->gamificationDashboardService->getSummary($user);
         $gamificationInsights   = $this->gamificationDashboardService->getInsights($user);
+        $gamificationMissions   = $this->gamificationDashboardService->getStarterMissions($user);
         $widgetDefs             = self::WIDGETS;
         $widthOptions           = self::WIDTH_OPTIONS;
         $defaultLayout          = self::DEFAULT_LAYOUT;
@@ -127,6 +128,7 @@ class DashboardController extends Controller
             'topTags',
             'gamificationSummary',
             'gamificationInsights',
+            'gamificationMissions',
             'widgetLayout',
             'widgetDefs',
             'widthOptions',

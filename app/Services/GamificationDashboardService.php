@@ -2,6 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\Anggaran;
+use App\Models\Tabungan;
+use App\Models\Transaksi;
+use App\Models\UserAchievement;
 use App\Models\UserChallenge;
 use App\Models\UserGamification;
 use App\Models\WeeklyReview;
@@ -178,7 +182,7 @@ class GamificationDashboardService
             ? (LevelService::xpThreshold($level) + LevelService::xpToNextLevel($level)) - $gami->total_xp
             : 0;
 
-        $earnedCount = \App\Models\UserAchievement::where('user_id', $user->id)->count();
+        $earnedCount = UserAchievement::where('user_id', $user->id)->count();
 
         $activeChallenges = UserChallenge::where('user_id', $user->id)
             ->whereNull('completed_at')
@@ -196,6 +200,76 @@ class GamificationDashboardService
             'momentum_color'    => $momentumColor,
             'earned_count'      => $earnedCount,
             'active_challenges' => $activeChallenges,
+        ];
+    }
+
+    /**
+     * Misi pembuka untuk user baru — langkah konkret yang membangun progres awal.
+     * Tiap misi data-driven (status `done` mengikuti aktivitas nyata household),
+     * sehingga user baru langsung tahu apa yang harus dilakukan berikutnya.
+     *
+     * @return array{
+     *     missions: array<int, array{key:string, label:string, hint:string, icon:string, reward:string, done:bool, link:string}>,
+     *     done_count: int,
+     *     total: int,
+     *     all_done: bool,
+     *     percent: int
+     * }
+     */
+    public function getStarterMissions(User $user): array
+    {
+        $transaksiCount = Transaksi::count();
+        $hasAnggaran    = Anggaran::exists();
+        $hasTabungan    = Tabungan::exists();
+
+        $missions = [
+            [
+                'key'    => 'first_transaction',
+                'label'  => 'Catat transaksi pertama',
+                'hint'   => 'Masukkan pemasukan atau pengeluaran',
+                'icon'   => 'bi-pencil-square',
+                'reward' => '+2 XP',
+                'done'   => $transaksiCount > 0,
+                'link'   => route('transaksi.create'),
+            ],
+            [
+                'key'    => 'create_budget',
+                'label'  => 'Buat anggaran bulanan',
+                'hint'   => 'Tentukan batas pengeluaran per kategori',
+                'icon'   => 'bi-wallet2',
+                'reward' => '+10 XP',
+                'done'   => $hasAnggaran,
+                'link'   => route('anggaran.create'),
+            ],
+            [
+                'key'    => 'create_savings',
+                'label'  => 'Atur target tabungan',
+                'hint'   => 'Mulai menabung untuk tujuanmu',
+                'icon'   => 'bi-bullseye',
+                'reward' => '+20 XP',
+                'done'   => $hasTabungan,
+                'link'   => route('tabungan.create'),
+            ],
+            [
+                'key'    => 'build_habit',
+                'label'  => 'Catat 5 transaksi (' . min($transaksiCount, 5) . '/5)',
+                'hint'   => 'Bangun kebiasaan mencatat tiap hari',
+                'icon'   => 'bi-calendar-check',
+                'reward' => 'Momentum',
+                'done'   => $transaksiCount >= 5,
+                'link'   => route('transaksi.create'),
+            ],
+        ];
+
+        $doneCount = count(array_filter($missions, fn ($m) => $m['done']));
+        $total     = count($missions);
+
+        return [
+            'missions'   => $missions,
+            'done_count' => $doneCount,
+            'total'      => $total,
+            'all_done'   => $doneCount >= $total,
+            'percent'    => $total > 0 ? (int) round($doneCount / $total * 100) : 0,
         ];
     }
 }
