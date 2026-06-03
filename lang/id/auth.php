@@ -1,12 +1,16 @@
 <?php
 
 return [
+    // Throttle (rate limiting)
+    'throttle'              => 'Terlalu banyak percobaan masuk. Silakan coba lagi dalam :seconds detik.',
+
     // Login
     'welcome_back'          => 'Selamat Datang Kembali 👋',
     'login_subtitle'        => 'Masuk untuk melanjutkan ke akun Anda',
     'email_label'           => 'Email',
     'password_label'        => 'Password',
     'remember_me'           => 'Ingat saya',
+    'toggle_password'       => 'Tampilkan atau sembunyikan password',
     'login_btn'             => 'Masuk',
     'no_account'            => 'Belum punya akun?',
     'register_now'          => 'Daftar sekarang',

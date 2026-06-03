@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Dashboard') - Romoly</title>
     <link rel="shortcut icon" type="image/png" href="{{ asset('favicon.ico') }}">
@@ -11,13 +11,8 @@
     {{-- Google Fonts --}}
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800" rel="stylesheet">
 
-    {{-- Icon Libraries (lokal) --}}
+    {{-- Icon Library (lokal) — Bootstrap Icons sebagai satu-satunya set ikon aplikasi --}}
     <link rel="stylesheet" href="{{ asset('dompet/icons/bootstrap-icons/font/bootstrap-icons.css') }}">
-    <link rel="stylesheet" href="{{ asset('dompet/icons/avasta/css/style.css') }}">
-
-    {{-- Icon Libraries (CDN) --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/line-awesome@1.3.0/dist/line-awesome/css/line-awesome.min.css">
 
     {{-- Vendor CSS --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/metisMenu/3.0.7/metisMenu.min.css">
@@ -229,7 +224,8 @@
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);"
                                onclick="window.RomolyTour && window.RomolyTour.replay()"
-                               title="{{ __('tour.common.replay_title') }}">
+                               title="{{ __('tour.common.replay_title') }}"
+                               aria-label="{{ __('tour.common.replay_title') }}">
                                 <i class="bi bi-question-circle fs-5"></i>
                             </a>
                         </li>
@@ -237,6 +233,7 @@
                         {{-- Notifikasi --}}
                         <li class="nav-item dropdown notification_dropdown">
                             <a class="nav-link" href="{{ route('notifikasi.index') }}" title="{{ __('messages.notifications') }}"
+                               aria-label="{{ __('messages.notifications') }}"
                                data-tour="topbar-notif">
                                 <i class="bi bi-bell fs-5"></i>
                             </a>
@@ -245,6 +242,7 @@
                         {{-- Dark / Light Toggle --}}
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" id="darkModeToggle" title="{{ __('messages.toggle_theme') }}"
+                               role="button" aria-label="{{ __('messages.toggle_theme') }}"
                                data-tour="topbar-theme">
                                 <i class="bi bi-moon-stars-fill fs-5" id="darkModeIcon"></i>
                             </a>
@@ -447,29 +445,32 @@
     <div class="content-body">
         <div class="container-fluid">
 
+            {{-- Pengingat verifikasi email (soft) --}}
+            @include('partials.verify-email-banner')
+
             {{-- Flash Messages --}}
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
                     <i class="bi bi-check-circle me-2"></i> {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ __('messages.close') }}"></button>
                 </div>
             @endif
             @if(session('error'))
                 <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
                     <i class="bi bi-x-circle me-2"></i> {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ __('messages.close') }}"></button>
                 </div>
             @endif
             @if(session('warning'))
                 <div class="alert alert-warning alert-dismissible fade show mt-3" role="alert">
                     <i class="bi bi-exclamation-triangle me-2"></i> {{ session('warning') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ __('messages.close') }}"></button>
                 </div>
             @endif
             @if(session('info'))
                 <div class="alert alert-info alert-dismissible fade show mt-3" role="alert">
                     <i class="bi bi-info-circle me-2"></i> {{ session('info') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ __('messages.close') }}"></button>
                 </div>
             @endif
 
@@ -501,25 +502,29 @@
     <div id="fab-actions">
         <div class="fab-action">
             <span class="fab-label">{{ __('navigation.expense') }}</span>
-            <a href="{{ route('transaksi.create') }}?jenis=pengeluaran" class="fab-mini bg-danger">
-                <i class="fas fa-arrow-down"></i>
+            <a href="{{ route('transaksi.create') }}?jenis=pengeluaran" class="fab-mini bg-danger"
+               aria-label="{{ __('navigation.expense') }}">
+                <i class="bi bi-arrow-down"></i>
             </a>
         </div>
         <div class="fab-action">
             <span class="fab-label">{{ __('navigation.income') }}</span>
-            <a href="{{ route('transaksi.create') }}?jenis=pemasukan" class="fab-mini bg-success">
-                <i class="fas fa-arrow-up"></i>
+            <a href="{{ route('transaksi.create') }}?jenis=pemasukan" class="fab-mini bg-success"
+               aria-label="{{ __('navigation.income') }}">
+                <i class="bi bi-arrow-up"></i>
             </a>
         </div>
         <div class="fab-action">
             <span class="fab-label">{{ __('navigation.transfer') }}</span>
-            <a href="{{ route('transaksi.create') }}?jenis=transfer" class="fab-mini" style="background:var(--primary);">
-                <i class="fas fa-right-left"></i>
+            <a href="{{ route('transaksi.create') }}?jenis=transfer" class="fab-mini" style="background:var(--primary);"
+               aria-label="{{ __('navigation.transfer') }}">
+                <i class="bi bi-arrow-left-right"></i>
             </a>
         </div>
     </div>
-    <button id="fab-main" type="button" onclick="toggleFab()" title="{{ __('navigation.add_transaction') }}" data-tour="fab-add">
-        <i class="fas fa-plus"></i>
+    <button id="fab-main" type="button" onclick="toggleFab()" title="{{ __('navigation.add_transaction') }}"
+            aria-label="{{ __('navigation.add_transaction') }}" data-tour="fab-add">
+        <i class="bi bi-plus-lg"></i>
     </button>
 </div>
 

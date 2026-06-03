@@ -1,12 +1,16 @@
 <?php
 
 return [
+    // Throttle (rate limiting)
+    'throttle'              => 'Too many login attempts. Please try again in :seconds seconds.',
+
     // Login
     'welcome_back'          => 'Welcome Back 👋',
     'login_subtitle'        => 'Sign in to continue to your account',
     'email_label'           => 'Email',
     'password_label'        => 'Password',
     'remember_me'           => 'Remember me',
+    'toggle_password'       => 'Show or hide password',
     'login_btn'             => 'Sign In',
     'no_account'            => "Don't have an account?",
     'register_now'          => 'Register now',

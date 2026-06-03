@@ -39,6 +39,7 @@
                        style="border-left:none;">
                 <button type="button" class="btn btn-outline-secondary border-start-0"
                         onclick="togglePassword('password', this)"
+                        aria-label="{{ __('auth.toggle_password') }}"
                         style="border-left:none;">
                     <i class="bi bi-eye"></i>
                 </button>
