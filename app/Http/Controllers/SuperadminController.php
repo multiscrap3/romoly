@@ -8,9 +8,11 @@ use App\Models\SecurityLog;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class SuperadminController extends Controller
@@ -170,6 +172,74 @@ class SuperadminController extends Controller
         $allOk = collect($checks)->every(fn ($c) => $c['status'] === 'ok');
 
         return view('superadmin.health', compact('checks', 'allOk'));
+    }
+
+    /**
+     * Halaman Deploy & Migrasi — untuk shared hosting tanpa SSH.
+     * Hanya dapat diakses role superadmin (middleware superadmin.global).
+     */
+    public function deploy(): View
+    {
+        $migrator = app('migrator');
+        $repository = $migrator->getRepository();
+
+        $ran     = $repository->repositoryExists() ? $repository->getRan() : [];
+        $files   = $migrator->getMigrationFiles(database_path('migrations'));
+        $allNames = array_keys($files);
+        $pending = array_values(array_diff($allNames, $ran));
+
+        return view('superadmin.deploy', [
+            'ranCount'   => count($ran),
+            'totalCount' => count($allNames),
+            'pending'    => $pending,
+            'output'     => session('deploy_output'),
+        ]);
+    }
+
+    /**
+     * Jalankan migrasi yang tertunda (production-safe, --force, idempoten).
+     */
+    public function runMigrate(): RedirectResponse
+    {
+        try {
+            Artisan::call('migrate', ['--force' => true]);
+            $output = Artisan::output();
+
+            SecurityLog::record('superadmin.migrate', 'high', ['output' => mb_substr($output, 0, 5000)]);
+
+            return back()
+                ->with('success', 'Migrasi selesai dijalankan.')
+                ->with('deploy_output', $output);
+        } catch (\Throwable $e) {
+            Log::error('Superadmin migrate gagal', ['error' => $e->getMessage()]);
+
+            return back()
+                ->with('error', 'Migrasi gagal: ' . $e->getMessage())
+                ->with('deploy_output', Artisan::output());
+        }
+    }
+
+    /**
+     * Bersihkan cache config/route/view/cache (pengganti optimize:clear tanpa SSH).
+     */
+    public function clearCache(): RedirectResponse
+    {
+        $results = [];
+
+        foreach (['config:clear', 'route:clear', 'view:clear', 'cache:clear'] as $command) {
+            try {
+                Artisan::call($command);
+                $results[$command] = 'ok';
+            } catch (\Throwable $e) {
+                $results[$command] = 'gagal: ' . $e->getMessage();
+            }
+        }
+
+        SecurityLog::record('superadmin.clear_cache', 'medium', ['results' => $results]);
+
+        $ok = array_keys(array_filter($results, fn ($r) => $r === 'ok'));
+
+        return back()->with('success', 'Cache dibersihkan: ' . implode(', ', $ok) . '.');
     }
 
     private function checkDatabase(): array

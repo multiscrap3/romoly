@@ -148,6 +148,13 @@
                     </a>
                 </li>
 
+                <li class="{{ request()->routeIs('superadmin.deploy*') ? 'mm-active' : '' }}">
+                    <a href="{{ route('superadmin.deploy') }}">
+                        <i class="bi bi-database-gear"></i>
+                        <span class="nav-text">Deploy & Migrasi</span>
+                    </a>
+                </li>
+
             </ul>
         </div>
     </div>

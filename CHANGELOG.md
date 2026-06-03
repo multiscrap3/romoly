@@ -19,6 +19,18 @@ dan project ini menggunakan [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.11.0] — 2026-06-03
+
+### Changed
+- **Deploy & Migrasi dipindah ke UI Superadmin** (menu baru "Deploy & Migrasi", `GET /superadmin/deploy`), dijaga `auth` + `superadmin.global` sehingga **hanya dapat diakses role superadmin**. Halaman menampilkan status migrasi (sudah/Belum dijalankan + daftar migrasi tertunda) dan tombol aksi:
+  - **Jalankan Migrasi** (`POST /superadmin/deploy/migrate`) — `migrate --force`, idempoten, output ditampilkan + dicatat ke `SecurityLog` (`superadmin.migrate`).
+  - **Bersihkan Cache** (`POST /superadmin/deploy/clear-cache`) — config/route/view/cache clear.
+
+### Removed
+- Endpoint `cron.secret` `GET /deploy/*` dan `DeployController` (ditambahkan di 1.10.0) dihapus — akses deploy kini eksklusif via role superadmin, bukan secret query.
+
+---
+
 ## [1.10.0] — 2026-06-03
 
 ### Added

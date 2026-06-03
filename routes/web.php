@@ -5,7 +5,6 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CronController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\DeployController;
 use App\Http\Controllers\GamificationController;
 use App\Http\Controllers\ImportBankController;
 use App\Http\Controllers\LaporanController;
@@ -184,14 +183,6 @@ Route::prefix('cron')->name('cron.')->middleware('cron.secret')->group(function 
     Route::get('/health', [CronController::class, 'health'])->name('health');
 });
 
-// Deploy (manual, shared hosting tanpa SSH) — dijaga cron.secret.
-// Pakai GET agar bisa dipicu langsung dari browser/cPanel.
-Route::prefix('deploy')->name('deploy.')->middleware('cron.secret')->group(function () {
-    Route::get('/migrate-status', [DeployController::class, 'migrateStatus'])->name('migrate-status');
-    Route::get('/migrate', [DeployController::class, 'migrate'])->name('migrate');
-    Route::get('/clear-cache', [DeployController::class, 'clearCache'])->name('clear-cache');
-});
-
 // Superadmin
 Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'superadmin.global'])->group(function () {
     Route::get('/', [SuperadminController::class, 'dashboard'])->name('dashboard');
@@ -203,6 +194,9 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'superadmi
     Route::get('/logs', [SuperadminController::class, 'logs'])->name('logs');
     Route::get('/health', [SuperadminController::class, 'health'])->name('health');
     Route::get('/ai-monitor', [SuperadminAiMonitorController::class, 'index'])->name('ai-monitor');
+    Route::get('/deploy', [SuperadminController::class, 'deploy'])->name('deploy');
+    Route::post('/deploy/migrate', [SuperadminController::class, 'runMigrate'])->name('deploy.migrate');
+    Route::post('/deploy/clear-cache', [SuperadminController::class, 'clearCache'])->name('deploy.clear-cache');
 });
 
 // API-like routes for AJAX calls
