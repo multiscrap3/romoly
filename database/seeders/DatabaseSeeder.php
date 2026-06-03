@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
             SettingSeeder::class,
             AdminUserSeeder::class,
             KategoriDefaultSeeder::class,
+            AchievementSeeder::class,
+            ChallengeSeeder::class,
         ]);
     }
 }
