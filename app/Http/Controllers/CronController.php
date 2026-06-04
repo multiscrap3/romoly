@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\GeneralNotificationMail;
 use App\Models\AuditLog;
 use App\Models\Household;
 use App\Models\ImportBank;
+use App\Models\PaymentHistory;
+use App\Models\Plan;
 use App\Services\AnomalyDetectionService;
 use App\Services\ChallengeService;
 use App\Services\InsightService;
 use App\Services\MomentumService;
 use App\Services\NotifikasiService;
+use App\Services\Payment\PaymentService;
 use App\Services\RecurringService;
 use App\Services\WeeklyReviewService;
 use Carbon\Carbon;
@@ -17,6 +21,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class CronController extends Controller
@@ -29,6 +34,7 @@ class CronController extends Controller
         private readonly MomentumService $momentumService,
         private readonly ChallengeService $challengeService,
         private readonly WeeklyReviewService $weeklyReviewService,
+        private readonly PaymentService $paymentService,
     ) {}
 
     public function processRecurring(Request $request): JsonResponse
@@ -355,5 +361,144 @@ class CronController extends Controller
                 'error'   => $e->getMessage(),
             ], 500);
         }
+    }
+
+    /**
+     * Rekonsiliasi pembayaran pending — polling status ke gateway.
+     * Safety net untuk webhook yang gagal (shared hosting / localhost).
+     * Jalankan tiap 10 menit via cron-job.org.
+     */
+    public function reconcilePayments(): JsonResponse
+    {
+        $expiredCount = PaymentHistory::where('status', 'pending')
+            ->where('expired_at', '<=', now())
+            ->update(['status' => 'failed']);
+
+        $pending = PaymentHistory::where('status', 'pending')
+            ->where('expired_at', '>', now())
+            ->where('created_at', '<', now()->subMinutes(5))
+            ->get();
+
+        $reconciled = 0;
+        foreach ($pending as $payment) {
+            try {
+                $status = $this->paymentService->syncStatus($payment);
+                if ($status === 'paid') {
+                    $reconciled++;
+                }
+            } catch (\Throwable $e) {
+                Log::warning('Rekonsiliasi gagal untuk ' . $payment->merchant_ref . ': ' . $e->getMessage());
+            }
+        }
+
+        Log::info('Cron reconcilePayments selesai', [
+            'reconciled' => $reconciled,
+            'expired'    => $expiredCount,
+            'checked'    => $pending->count(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Rekonsiliasi selesai. {$reconciled} aktif, {$expiredCount} expired.",
+            'data'    => ['reconciled' => $reconciled, 'expired' => $expiredCount, 'checked' => $pending->count()],
+        ]);
+    }
+
+    /**
+     * Downgrade household ke FREE jika subscription_end sudah lewat.
+     * Jalankan sekali sehari (01:00 WIB) via cron-job.org.
+     */
+    public function processExpiredSubscriptions(): JsonResponse
+    {
+        $freePlan = Plan::where('slug', 'free')->first();
+
+        $households = Household::whereNotNull('subscription_end')
+            ->whereDate('subscription_end', '<', today())
+            ->where('plan_id', '!=', $freePlan->id)
+            ->get();
+
+        $downgraded = 0;
+        foreach ($households as $household) {
+            $oldPlanNama = $household->plan?->nama ?? 'Unknown';
+
+            $household->forceFill([
+                'plan_id'             => $freePlan->id,
+                'subscription_end'    => null,
+                'renewal_reminded_at' => null,
+            ])->save();
+
+            foreach ($household->users()->get()->filter(fn ($u) => $u->hasRole('admin')) as $admin) {
+                $this->notifikasiService->send(
+                    $admin->id,
+                    'Langganan telah berakhir',
+                    "Paket {$oldPlanNama} Anda telah berakhir. Akun kini menggunakan paket Free.",
+                    'info'
+                );
+            }
+
+            $downgraded++;
+        }
+
+        Log::info('Cron processExpiredSubscriptions selesai', ['downgraded' => $downgraded]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "{$downgraded} household didowngrade ke FREE.",
+            'data'    => ['downgraded' => $downgraded],
+        ]);
+    }
+
+    /**
+     * Kirim reminder H-7 ke admin household yang langganannya akan habis.
+     * Catat renewal_reminded_at agar tidak kirim ulang dalam 5 hari.
+     * Jalankan setiap hari (08:00 WIB) via cron-job.org.
+     */
+    public function sendRenewalReminders(): JsonResponse
+    {
+        $freePlan = Plan::where('slug', 'free')->first();
+
+        $households = Household::whereNotNull('subscription_end')
+            ->whereDate('subscription_end', '>=', today())
+            ->whereDate('subscription_end', '<=', today()->addDays(7))
+            ->where('plan_id', '!=', $freePlan->id)
+            ->where(function ($q) {
+                $q->whereNull('renewal_reminded_at')
+                  ->orWhere('renewal_reminded_at', '<', now()->subDays(5));
+            })
+            ->get();
+
+        $sent = 0;
+        foreach ($households as $household) {
+            $daysLeft = (int) today()->diffInDays($household->subscription_end, false);
+            $planNama = $household->plan?->nama ?? 'Berbayar';
+
+            foreach ($household->users()->get()->filter(fn ($u) => $u->hasRole('admin')) as $admin) {
+                if (! $admin->wantsEmailNotifications()) {
+                    continue;
+                }
+
+                Mail::to($admin->email)->queue(new GeneralNotificationMail(
+                    judul: "Langganan {$planNama} berakhir dalam {$daysLeft} hari",
+                    pesan: "Langganan Romoly {$planNama} Anda akan berakhir pada "
+                        . $household->subscription_end->translatedFormat('d F Y')
+                        . ". Perpanjang sekarang agar akses tidak terputus.",
+                    tipe: 'warning',
+                    ctaUrl: route('billing.index'),
+                    ctaLabel: 'Perpanjang Sekarang',
+                    greetingName: $admin->name,
+                ));
+                $sent++;
+            }
+
+            $household->update(['renewal_reminded_at' => now()]);
+        }
+
+        Log::info('Cron sendRenewalReminders selesai', ['sent' => $sent, 'households' => $households->count()]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "{$sent} reminder terkirim ke antrian.",
+            'data'    => ['sent' => $sent, 'households_checked' => $households->count()],
+        ]);
     }
 }

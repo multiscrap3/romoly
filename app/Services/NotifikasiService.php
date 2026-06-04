@@ -24,17 +24,18 @@ class NotifikasiService
         string $tipe = 'info',
         bool $email = false,
         ?string $ctaUrl = null,
-        ?string $ctaLabel = null
+        ?string $ctaLabel = null,
+        string $jenis = 'sistem',
     ): Notifikasi {
         $user = User::findOrFail($userId);
 
         $notifikasi = Notifikasi::create([
             'household_id' => $user->household_id,
-            'user_id' => $userId,
-            'judul' => $judul,
-            'pesan' => $pesan,
-            'tipe' => $tipe,
-            'dibaca' => false,
+            'user_id'      => $userId,
+            'judul'        => $judul,
+            'pesan'        => $pesan,
+            'jenis'        => $jenis,
+            'is_read'      => false,
         ]);
 
         if ($email) {

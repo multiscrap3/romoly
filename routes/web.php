@@ -227,6 +227,9 @@ Route::prefix('cron')->name('cron.')->middleware('cron.secret')->group(function 
     Route::post('/gamifikasi/generate-challenges', [CronController::class, 'gamifikasiGenerateChallenges'])->name('gamifikasi.generate-challenges');
     Route::post('/gamifikasi/weekly-reviews', [CronController::class, 'gamifikasiWeeklyReviews'])->name('gamifikasi.weekly-reviews');
     Route::post('/process-mail', [CronController::class, 'processMailQueue'])->name('process-mail');
+    Route::post('/reconcile-payments', [CronController::class, 'reconcilePayments'])->name('reconcile-payments');
+    Route::post('/process-expired-subscriptions', [CronController::class, 'processExpiredSubscriptions'])->name('process-expired-subscriptions');
+    Route::post('/send-renewal-reminders', [CronController::class, 'sendRenewalReminders'])->name('send-renewal-reminders');
     Route::get('/health', [CronController::class, 'health'])->name('health');
 });
 
