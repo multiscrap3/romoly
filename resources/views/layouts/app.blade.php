@@ -429,6 +429,14 @@
                     <span>{{ __('navigation.account') }}</span>
                 </li>
 
+                {{-- Langganan --}}
+                <li class="{{ request()->routeIs('billing.*') ? 'mm-active' : '' }}">
+                    <a href="{{ route('billing.index') }}" aria-expanded="false">
+                        <i class="bi bi-stars"></i>
+                        <span class="nav-text">Langganan</span>
+                    </a>
+                </li>
+
                 {{-- Pengaturan --}}
                 <li class="{{ request()->routeIs('settings.*') ? 'mm-active' : '' }}">
                     <a href="{{ route('settings.index') }}" aria-expanded="false">
