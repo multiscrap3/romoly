@@ -433,7 +433,24 @@
                 <li class="{{ request()->routeIs('billing.*') ? 'mm-active' : '' }}">
                     <a href="{{ route('billing.index') }}" aria-expanded="false">
                         <i class="bi bi-stars"></i>
-                        <span class="nav-text">Langganan</span>
+                        <span class="nav-text">
+                            Langganan
+                            @auth
+                            @php
+                                $sidebarPlan     = auth()->user()->household?->plan;
+                                $sidebarSubEnd   = auth()->user()->household?->subscription_end;
+                                $sidebarExpiring = $sidebarSubEnd
+                                    && $sidebarSubEnd->isFuture()
+                                    && $sidebarSubEnd->diffInDays(now(), false) >= -7;
+                            @endphp
+                            @if($sidebarPlan)
+                                <span class="badge ms-1 {{ $sidebarPlan->slug === 'free' ? 'bg-secondary' : ($sidebarExpiring ? 'bg-warning text-dark' : 'bg-primary') }}"
+                                      style="font-size:.6rem;vertical-align:middle">
+                                    {{ $sidebarPlan->nama }}
+                                </span>
+                            @endif
+                            @endauth
+                        </span>
                     </a>
                 </li>
 
