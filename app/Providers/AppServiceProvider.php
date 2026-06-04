@@ -8,7 +8,17 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    public function register(): void {}
+    public function register(): void
+    {
+        $this->app->bind(\App\Contracts\PaymentGateway::class, function () {
+            return match (config('payment.gateway')) {
+                'duitku' => new \App\Services\Payment\DuitkuGateway(),
+                default  => throw new \RuntimeException(
+                    'Payment gateway tidak dikenal: ' . config('payment.gateway')
+                ),
+            };
+        });
+    }
 
     public function boot(): void
     {
