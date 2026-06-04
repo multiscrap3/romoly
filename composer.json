@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "duitkupg/duitku-php": "dev-master@dev",
         "laravel/framework": "^13.7",
         "laravel/tinker": "^3.0",
         "phpoffice/phpspreadsheet": "^5.7",
@@ -26,7 +27,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "classmap": [
+            "vendor/duitkupg/duitku-php/Duitku/"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
