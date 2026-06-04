@@ -25,14 +25,15 @@ class PaymentService
      */
     public function checkout(User $user, Plan $plan, string $period): PaymentHistory
     {
-        $months = (int) config("payment.periods.$period", 1);
+        $months     = (int) config("payment.periods.$period", 1);
+        $totalHarga = (int) $plan->harga * ($period === 'yearly' ? 10 : 1);
 
         $payment = PaymentHistory::create([
             'household_id'   => $user->household_id,
             'plan_id'        => $plan->id,
             'gateway'        => config('payment.gateway'),
             'merchant_ref'   => 'ROM-' . Str::uuid()->toString(),
-            'amount'         => $plan->harga,
+            'amount'         => $totalHarga,
             'billing_period' => $period,
             'payment_method' => 'lainnya',
             'status'         => 'pending',

@@ -208,6 +208,7 @@ Route::middleware('auth')->prefix('billing')->name('billing.')->group(function (
     Route::post('/pay',                 [\App\Http\Controllers\BillingController::class, 'pay'])->name('pay');
     Route::get('/return',               [\App\Http\Controllers\BillingController::class, 'return'])->name('return');
     Route::get('/status/{ref}',         [\App\Http\Controllers\BillingController::class, 'status'])->name('status');
+    Route::get('/history',              [\App\Http\Controllers\BillingController::class, 'history'])->name('history');
 });
 
 // Webhook publik gateway (tanpa auth; divalidasi via signature SDK)

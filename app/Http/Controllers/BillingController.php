@@ -17,10 +17,19 @@ class BillingController extends Controller
     /** Halaman pricing. */
     public function index()
     {
-        $plans   = Plan::where('is_active', true)->orderBy('harga')->get();
-        $current = auth()->user()->household?->plan;
+        $user      = auth()->user();
+        $household = $user->household;
+        $plans     = Plan::where('is_active', true)->orderBy('harga')->get();
+        $current   = $household?->plan;
 
-        return view('billing.index', compact('plans', 'current'));
+        $daysLeft   = null;
+        $expirySoon = false;
+        if ($household?->subscription_end) {
+            $daysLeft   = (int) today()->diffInDays($household->subscription_end, false);
+            $expirySoon = $daysLeft <= 7 && $daysLeft >= 0;
+        }
+
+        return view('billing.index', compact('plans', 'current', 'household', 'daysLeft', 'expirySoon'));
     }
 
     /** Konfirmasi sebelum bayar. */
@@ -29,7 +38,9 @@ class BillingController extends Controller
         $period = $request->query('period', 'monthly');
         abort_unless(in_array($period, ['monthly', 'yearly'], true), 404);
 
-        return view('billing.checkout', compact('plan', 'period'));
+        $totalHarga = (int) $plan->harga * ($period === 'yearly' ? 10 : 1);
+
+        return view('billing.checkout', compact('plan', 'period', 'totalHarga'));
     }
 
     /** Buat transaksi & redirect ke halaman bayar gateway. */
@@ -60,6 +71,7 @@ class BillingController extends Controller
     {
         $payment = PaymentHistory::where('merchant_ref', $request->query('ref'))
             ->where('household_id', auth()->user()->household_id)
+            ->with('plan')
             ->firstOrFail();
 
         return view('billing.return', compact('payment'));
@@ -75,6 +87,17 @@ class BillingController extends Controller
         $status = $this->paymentService->syncStatus($payment);
 
         return response()->json(['status' => $status]);
+    }
+
+    /** Riwayat pembayaran household. */
+    public function history()
+    {
+        $payments = PaymentHistory::where('household_id', auth()->user()->household_id)
+            ->with('plan')
+            ->orderByDesc('created_at')
+            ->paginate(15);
+
+        return view('billing.history', compact('payments'));
     }
 
     /** Webhook publik dari gateway. Signature divalidasi di verifyCallback(). */
