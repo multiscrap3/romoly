@@ -18,12 +18,14 @@ class Household extends Model
         'plan_id',
         'subscription_start',
         'subscription_end',
+        'renewal_reminded_at',
         'status',
     ];
 
     protected $casts = [
-        'subscription_start' => 'date',
-        'subscription_end' => 'date',
+        'subscription_start'  => 'date',
+        'subscription_end'    => 'date',
+        'renewal_reminded_at' => 'datetime',
     ];
 
     /**
