@@ -201,6 +201,20 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{importBank}/file', [\App\Http\Controllers\ImportBankController::class, 'deleteFile'])->name('delete-file');
     });
 
+// Billing / Langganan
+Route::middleware('auth')->prefix('billing')->name('billing.')->group(function () {
+    Route::get('/',                     [\App\Http\Controllers\BillingController::class, 'index'])->name('index');
+    Route::get('/checkout/{plan:slug}', [\App\Http\Controllers\BillingController::class, 'checkout'])->name('checkout');
+    Route::post('/pay',                 [\App\Http\Controllers\BillingController::class, 'pay'])->name('pay');
+    Route::get('/return',               [\App\Http\Controllers\BillingController::class, 'return'])->name('return');
+    Route::get('/status/{ref}',         [\App\Http\Controllers\BillingController::class, 'status'])->name('status');
+});
+
+// Webhook publik gateway (tanpa auth; divalidasi via signature SDK)
+Route::post('/billing/webhook', [\App\Http\Controllers\BillingController::class, 'webhook'])
+    ->name('billing.webhook')
+    ->withoutMiddleware(['auth']);
+
 // Cron (internal, protected by cron.secret middleware)
 Route::prefix('cron')->name('cron.')->middleware('cron.secret')->group(function () {
     Route::post('/recurring', [CronController::class, 'processRecurring'])->name('recurring');

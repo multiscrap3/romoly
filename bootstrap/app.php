@@ -21,6 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             LocaleMiddleware::class,
         ]);
+        $middleware->validateCsrfTokens(except: [
+            'billing/webhook',
+        ]);
         $middleware->alias([
             'role' => RoleMiddleware::class,
             'household' => HouseholdMiddleware::class,
